@@ -1,0 +1,25 @@
+{
+  "name": "remotion-chess-puzzle",
+  "version": "1.0.0",
+  "description": "Chess puzzle video generation with Remotion",
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion bundle"
+  },
+  "dependencies": {
+    "@remotion/bundler": "^4.0.448",
+    "@remotion/cli": "^4.0.0",
+    "@remotion/google-fonts": "^4.0.448",
+    "@remotion/renderer": "^4.0.448",
+    "chess.js": "^1.0.0-beta.8",
+    "googleapis": "^171.4.0",
+    "react": "^18.0.0",
+    "react-chessboard": "^4.7.2",
+    "react-dom": "^18.0.0",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0"
+  },
+  "private": true
+}

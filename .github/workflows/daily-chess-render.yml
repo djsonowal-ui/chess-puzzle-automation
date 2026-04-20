@@ -1,0 +1,50 @@
+name: Daily Chess Automation
+
+on:
+  schedule:
+    # 8 AM IST (02:30 UTC)
+    - cron: '30 2 * * *'
+    # 2 PM IST (08:30 UTC)
+    - cron: '30 8 * * *'
+    # 7 PM IST (13:30 UTC)
+    - cron: '30 13 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  render_and_upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install FFMPEG
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Render Chess Video
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+        run: |
+          # Determine slot based on current hour (UTC)
+          HOUR=$(date -u +%H)
+          if [ "$HOUR" -eq 02 ]; then
+            SLOT="morning"
+          elif [ "$HOUR" -eq 08 ]; then
+            SLOT="afternoon"
+          elif [ "$HOUR" -eq 13 ]; then
+            SLOT="evening"
+          else
+            SLOT="morning" # Default for workflow_dispatch
+          fi
+          echo "Running for slot: $SLOT"
+          node automate.mjs --slot=$SLOT

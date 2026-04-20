@@ -12,11 +12,14 @@
     "@remotion/google-fonts": "^4.0.448",
     "@remotion/renderer": "^4.0.448",
     "chess.js": "^1.0.0-beta.8",
+    "cross-fetch": "^4.1.0",
+    "dotenv": "^17.4.2",
     "googleapis": "^171.4.0",
     "react": "^18.0.0",
     "react-chessboard": "^4.7.2",
     "react-dom": "^18.0.0",
-    "remotion": "^4.0.0"
+    "remotion": "^4.0.0",
+    "remotion-confetti": "^0.3.0"
   },
   "devDependencies": {
     "prettier": "^3.0.0"

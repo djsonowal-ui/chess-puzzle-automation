@@ -1,0 +1,26 @@
+[
+  {
+    "id": "morning_mate_2",
+    "session": "morning",
+    "mateCount": 2,
+    "initialFen": "3r2k1/5ppp/Q7/8/8/8/5PPP/4R1K1 w - - 0 1",
+    "puzzleMoves": ["a6d6", "d8d6", "e1e8"],
+    "playerColor": "white"
+  },
+  {
+    "id": "afternoon_mate_3",
+    "session": "afternoon",
+    "mateCount": 3,
+    "initialFen": "r1bq2k1/1p4pp/p2p4/3Np3/2P1P2r/8/PP2QP1P/R5RK b - - 1 1",
+    "puzzleMoves": ["h4h2", "h1h2", "d8h4", "h2g2", "h4h3"],
+    "playerColor": "black"
+  },
+  {
+    "id": "evening_mate_4",
+    "session": "evening",
+    "mateCount": 4,
+    "initialFen": "k6r/ppB4p/6p1/3r1pP1/3pp3/1b6/7P/R1R3K1 w - - 0 1",
+    "puzzleMoves": ["a1a7", "a8a7", "c1a1", "b3a2", "a1a2", "d5a5", "a2a5"],
+    "playerColor": "white"
+  }
+]

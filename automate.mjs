@@ -53,12 +53,35 @@ const GOOGLE_AUTH_CONFIG = {
   refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
 };
 
-const VIDEO_DETAILS = {
-  title: `${theme.title} ♟️ Mate in ${theme.mateCount} | ${new Date().toLocaleDateString()} #shorts`,
-  description: `Can you solve this Mate in ${theme.mateCount} puzzle? \n\n#chess #puzzles #chessshorts #checkmate #remotion #lichess #tactics`,
-  tags: ["chess", "puzzles", "shorts", "remotion", `matein${theme.mateCount}`],
-  category: "24",
-};
+// --- SEO EXPERT METADATA GENERATOR ---
+function generateSEOMetadata(theme, puzzleData) {
+  const hooks = [
+    "INSANE", "BRILLIANT", "SHOCKING", "IMPOSSIBLE", "TRAPPED", 
+    "UNBELIEVABLE", "SNEAKY", "HIDDEN", "SMART", "WICKED", "CRUSHING"
+  ];
+  const catchphrases = [
+    "Can you spot it?", "Did you see this coming?", "The engine found this!", 
+    "Harder than it looks!", "Wait for the end!", "Pure brilliance!", 
+    "A tactical masterclass."
+  ];
+  const emojis = ["♟️", "🤯", "🔥", "🏆", "🎯", "😱", "✅", "✨"];
+  
+  const hook = hooks[Math.floor(Math.random() * hooks.length)];
+  const catchphrase = catchphrases[Math.floor(Math.random() * catchphrases.length)];
+  const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  
+  const title = `${hook} Mate in ${puzzleData.mateCount}! ${emoji} ${catchphrase} #shorts`;
+  
+  const description = `Can you solve this ${puzzleData.mateCount}-move sequence? ♟️\n\nThis ${theme.title} puzzle is designed to test your tactical vision. ${catchphrase}\n\n🏆 Subscribe for Daily Chess Puzzles, Tactics & Brilliances!\n\n#chess #puzzles #chessshorts #checkmate #remotion #lichess #tactics #chesstactics #chessstrategy #puzzle`;
+  
+  const tags = [
+    "chess", "puzzles", "shorts", "remotion", `matein${puzzleData.mateCount}`,
+    "chess tactics", "chess strategy", "grandmaster", "magnus carlsen",
+    "chess puzzles", "chess opening", "chess endgame", "checkmate", "brilliant move"
+  ];
+
+  return { title, description, tags, category: "24" };
+}
 
 // --- RENDERING LOGIC ---
 async function renderPuzzle(puzzleData) {
@@ -106,7 +129,7 @@ async function renderPuzzle(puzzleData) {
 }
 
 // --- UPLOAD LOGIC ---
-async function uploadToYouTube(filePath) {
+async function uploadToYouTube(filePath, metadata) {
   if (!GOOGLE_AUTH_CONFIG.clientId || GOOGLE_AUTH_CONFIG.clientId.includes("YOUR_")) {
     console.warn("⚠️ Skipping YouTube upload due to missing credentials.");
     return null;
@@ -121,10 +144,10 @@ async function uploadToYouTube(filePath) {
     part: "snippet,status",
     requestBody: {
       snippet: {
-        title: VIDEO_DETAILS.title,
-        description: VIDEO_DETAILS.description,
-        tags: VIDEO_DETAILS.tags,
-        categoryId: VIDEO_DETAILS.category,
+        title: metadata.title,
+        description: metadata.description,
+        tags: metadata.tags,
+        categoryId: metadata.category,
       },
       status: { privacyStatus: "unlisted", selfDeclaredMadeForKids: false },
     },
@@ -139,8 +162,11 @@ async function uploadToYouTube(filePath) {
 async function main() {
   try {
     const puzzleData = await getSessionPuzzle(activeSessionKey, theme.mateCount);
+    const metadata = generateSEOMetadata(theme, puzzleData);
+    console.log(`✨ SEO Title: ${metadata.title}`);
+    
     const videoPath = await renderPuzzle(puzzleData);
-    await uploadToYouTube(videoPath);
+    await uploadToYouTube(videoPath, metadata);
     console.log(`🏁 ${theme.title} Automation complete!`);
   } catch (err) {
     console.error("\n❌ Automation failed:");

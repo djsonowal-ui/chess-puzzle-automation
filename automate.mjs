@@ -126,7 +126,7 @@ async function uploadToYouTube(filePath) {
         tags: VIDEO_DETAILS.tags,
         categoryId: VIDEO_DETAILS.category,
       },
-      status: { privacyStatus: "private", selfDeclaredMadeForKids: false },
+      status: { privacyStatus: "unlisted", selfDeclaredMadeForKids: false },
     },
     media: { body: fs.createReadStream(filePath) },
   });

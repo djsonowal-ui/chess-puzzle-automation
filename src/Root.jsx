@@ -3,10 +3,10 @@ import { PuzzleVideo } from "./PuzzleVideo";
 
 export const RemotionRoot = () => {
   // Logic to calculate duration based on moves
-  // Phase 1: 4s (Thinking), Phase 2: 1.5s per move, Phase 3: 2s buffer at end
+  // Phase 1: 2s (Hook), Phase 2: 4s (Pause), Phase 3: 1.5s per move, Phase 4: 2s buffer at end
   const calculateDuration = (moves) => {
-    const solutionMovesCount = Math.max(0, (moves?.length || 0) - 1);
-    const totalDurationInSeconds = 4 + solutionMovesCount * 1.5 + 2; // +2s buffer at end
+    const solutionMovesCount = Math.max(0, (moves?.length || 0));
+    const totalDurationInSeconds = 2 + 4 + solutionMovesCount * 1.5 + 2; 
     return Math.ceil(totalDurationInSeconds * 30);
   };
 

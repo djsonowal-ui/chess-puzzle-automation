@@ -111,12 +111,12 @@ function generateSEOMetadata(theme, puzzleData) {
     "chess tactics", "chess strategy", "grandmaster", "magnus carlsen",
     "chess puzzles", "chess opening", "chess endgame", "checkmate", "brilliant move"
   ];
-
-  return { title, description, tags, category: "24" };
+  const hookText = `${hook} MATE IN ${puzzleData.mateCount}!`;
+  return { title, description, tags, category: "24", hookText };
 }
 
 // --- RENDERING LOGIC ---
-async function renderPuzzle(puzzleData) {
+async function renderPuzzle(puzzleData, hookText) {
   console.log(`🚀 Rendering ${theme.title} (Mate in ${theme.mateCount})...`);
   
   if (process.env.FFMPEG_PATH && process.env.FFMPEG_PATH !== 'ffmpeg') {
@@ -134,6 +134,7 @@ async function renderPuzzle(puzzleData) {
     mateCount: requiredMateCount,
     colors: theme.colors,
     bg: theme.bg,
+    hookText,
   };
 
   const composition = await selectComposition({
@@ -288,7 +289,7 @@ async function main() {
       return;
     }
 
-    const videoPath = await renderPuzzle(puzzleData);
+    const videoPath = await renderPuzzle(puzzleData, metadata.hookText);
     await uploadToYouTube(videoPath, metadata);
 
     console.log(`🏁 ${theme.title} Automation complete!`);

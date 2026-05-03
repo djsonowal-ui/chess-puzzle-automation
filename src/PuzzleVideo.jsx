@@ -14,44 +14,38 @@ export const PuzzleVideo = ({
   sessionTitle = "Sunrise Solve",
   mateCount = 2,
   colors = { dark: "#769656", light: "#eeeed2" },
-  bg = "morning_bg.png"
+  bg = "morning_bg.png",
+  hookText = "BRILLIANT MATE IN 2!"
 }) => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
 
   // Phase Definitions (at 30fps)
-  const phase1End = 30;  // 1s
-  const phase2End = 60;  // 2s
-  const phase3End = 120; // 4s
-  const moveInterval = 45; // 1.5s
+  const hookEnd = 60;  // 2s Hook
+  const pauseEnd = 180; // 4s Pause (Total 6s before moves)
+  const moveInterval = 45; // 1.5s per move
 
   const { currentFen, phase, resultMetadata, solutionIndex } = useMemo(() => {
     const game = new Chess(initialFen);
-    let currentPhase = "THINKING";
-    let solutionIndex = 0;
+    let currentPhase = "HOOK";
+    let solutionIndex = -1;
 
-    // Apply the opponent's move (mistake) immediately so it's shown from the start
-    try {
-      game.move({ 
-        from: puzzleMoves[0].substring(0, 2), 
-        to: puzzleMoves[0].substring(2, 4), 
-        promotion: "q" 
-      });
-    } catch (e) {
-      console.error("Invalid opponent move:", puzzleMoves[0]);
-    }
-
-    // Phase 1-3: Thinking Pause (0-7s)
-    if (frame < phase3End) {
-      currentPhase = "THINKING";
-      solutionIndex = 0;
+    // Phase 1: Hook (0-2s)
+    if (frame < hookEnd) {
+      currentPhase = "HOOK";
+      solutionIndex = -1;
     } 
-    // Phase 4: Solution Moves (7s+)
+    // Phase 2: Pause / Challenge (2-6s)
+    else if (frame < pauseEnd) {
+      currentPhase = "PAUSE";
+      solutionIndex = -1;
+    } 
+    // Phase 3: Solution Moves (6s+)
     else {
       currentPhase = "SOLUTION";
-      // Apply solution moves (starting from index 1)
-      solutionIndex = Math.floor((frame - phase3End) / moveInterval) + 1;
-      for (let i = 1; i < solutionIndex && i < puzzleMoves.length; i++) {
+      // Apply solution moves (starting from index 0)
+      solutionIndex = Math.floor((frame - pauseEnd) / moveInterval);
+      for (let i = 0; i <= solutionIndex && i < puzzleMoves.length; i++) {
         try {
           const m = puzzleMoves[i];
           game.move({ from: m.substring(0, 2), to: m.substring(2, 4), promotion: "q" });
@@ -78,13 +72,13 @@ export const PuzzleVideo = ({
 
   // Animations
   const boardEntry = spring({
-    frame,
+    frame: frame - hookEnd,
     fps,
     config: { damping: 12, mass: 0.8 },
   });
 
   const celebrationSpring = spring({
-    frame: frame - (phase3End + (puzzleMoves.length - 1) * moveInterval),
+    frame: frame - (pauseEnd + (puzzleMoves.length - 1) * moveInterval + 15), // Starts right after last move finishes
     fps,
     config: { stiffness: 100, damping: 10 },
   });
@@ -157,7 +151,56 @@ export const PuzzleVideo = ({
             colors={[colors.dark, '#FFD700', '#ffffff']}
             gravity={0.4}
           />
+          
+          {/* Outro CTA */}
+          <div style={{
+            position: "absolute",
+            bottom: 300,
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            zIndex: 100,
+            opacity: interpolate(frame, [pauseEnd + (puzzleMoves.length - 1) * moveInterval + 30, pauseEnd + (puzzleMoves.length - 1) * moveInterval + 45], [0, 1], { extrapolateRight: "clamp" }),
+            transform: `translateY(${interpolate(frame, [pauseEnd + (puzzleMoves.length - 1) * moveInterval + 30, pauseEnd + (puzzleMoves.length - 1) * moveInterval + 45], [50, 0], { extrapolateRight: "clamp" })}px)`
+          }}>
+            <h2 style={{
+              color: "white",
+              fontSize: 70,
+              fontWeight: 800,
+              background: "rgba(0,0,0,0.8)",
+              padding: "40px 80px",
+              borderRadius: 40,
+              boxShadow: "0 20px 40px rgba(0,0,0,0.5)",
+              border: "4px solid rgba(255,255,255,0.2)"
+            }}>
+              DID YOU FIND IT? SUBSCRIBE! 👇
+            </h2>
+          </div>
         </>
+      )}
+
+      {/* The Hook Overlay */}
+      {phase === "HOOK" && (
+        <div style={{
+          position: "absolute",
+          inset: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 50,
+          background: `radial-gradient(circle at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,1) 100%)`,
+        }}>
+           <h1 style={{
+             color: "#FFD700",
+             fontSize: 160,
+             fontWeight: 900,
+             textAlign: "center",
+             padding: "0 100px",
+             textTransform: "uppercase",
+             lineHeight: 1.2,
+             textShadow: "0 0 100px rgba(255,215,0,0.5)",
+           }}>{hookText}</h1>
+        </div>
       )}
 
       {/* Main Content */}
@@ -195,14 +238,14 @@ export const PuzzleVideo = ({
               </h2>
               <h1 style={{
                 color: "white",
-                fontSize: 140,
+                fontSize: 120,
                 fontWeight: 900,
                 textAlign: "center",
                 margin: "40px 0 0 0",
                 textShadow: "0 0 50px rgba(255,255,255,0.3)",
               }}>
                 {phase === "SOLUTION" ? "SOLUTION REVEALED" : 
-                 phase === "THINKING" ? "FIND THE BEST MOVE!" : "GET READY..."}
+                 phase === "PAUSE" ? "PAUSE AND FIND THE MATE!" : ""}
               </h1>
             </>
           )}

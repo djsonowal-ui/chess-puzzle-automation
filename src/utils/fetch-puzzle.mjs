@@ -43,26 +43,6 @@ export async function getSessionPuzzle(session, requiredMateCount) {
     }
   }
 
-  // Fallback to Lichess Daily if no local match found
-  console.log("⚠️ CRITICAL: No matching puzzles found in local DB. Falling back to Lichess Daily.");
-  console.log("📝 Note: Falling back to Lichess Daily may result in duplicate uploads if run multiple times today.");
-  
-  const response = await fetch("https://lichess.org/api/puzzle/daily");
-  if (!response.ok) {
-    throw new Error(`Failed to fetch Lichess puzzle: ${response.statusText}`);
-  }
-
-  const data = await response.json();
-  const initialFen = data.puzzle.fen;
-  const puzzleMoves = data.puzzle.solution;
-  const sideToMove = initialFen.split(" ")[1];
-  const playerColor = sideToMove === "w" ? "white" : "black";
-
-  return {
-    initialFen,
-    puzzleMoves,
-    playerColor,
-    id: `lichess_daily_${data.puzzle.id}_${new Date().toISOString().split('T')[0]}`,
-    mateCount: Math.floor(puzzleMoves.length / 2),
-  };
+  // Throw an error if no local match is found
+  throw new Error(`⚠️ CRITICAL: No unused puzzles found for session '${session}' (Required Mate in ${requiredMateCount}). Please run 'node replenish.mjs' to restock the database.`);
 }

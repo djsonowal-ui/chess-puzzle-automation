@@ -20,6 +20,7 @@ To ensure the stability and quality of the automated chess puzzle system, follow
 - **Framerate**: Always render at **30 fps**.
 - **Audio**: Always include `audioCodec: "aac"` and move the `Audio` component to the top of the React tree to ensure it initializes correctly.
 - **Background Assets**: Use the custom background images (`morning_bg.png`, `afternoon_bg.png`, `evening_bg.png`, `midnight_bg.png`) corresponding to the theme.
+- **Timeline**: The initial board position (after the opponent's mistake) MUST be displayed for exactly **4 seconds** before the solution moves begin animating.
 
 ## 4. Automation & Scheduling
 - **Run Schedule**: The automation runs once daily at **6:00 AM IST** (00:30 UTC).

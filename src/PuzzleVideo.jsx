@@ -21,8 +21,8 @@ export const PuzzleVideo = ({
 
   // Phase Definitions (at 30fps)
   const phase1End = 30;  // 1s
-  const phase2End = 90;  // 3s
-  const phase3End = 210; // 7s
+  const phase2End = 60;  // 2s
+  const phase3End = 120; // 4s
   const moveInterval = 45; // 1.5s
 
   const { currentFen, phase, resultMetadata, solutionIndex } = useMemo(() => {

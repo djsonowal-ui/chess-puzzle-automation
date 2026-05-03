@@ -2,13 +2,13 @@ name: Daily Chess Automation
 
 on:
   schedule:
-    # 8 AM IST (02:30 UTC)
-    - cron: '30 2 * * *'
-    # 2 PM IST (08:30 UTC)
-    - cron: '30 8 * * *'
-    # 7 PM IST (13:30 UTC)
-    - cron: '30 13 * * *'
+    # 6 AM IST (00:30 UTC) - Run once daily
+    - cron: '30 0 * * *'
   workflow_dispatch: # Allow manual triggering
+
+# Permissions needed to commit changes back to the repository
+permissions:
+  contents: write
 
 jobs:
   render_and_upload:
@@ -29,22 +29,46 @@ jobs:
       - name: Install FFMPEG
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
-      - name: Render Chess Video
+      - name: Replenish Puzzles
+        run: node replenish.mjs
+
+      - name: Render Morning Video
+        continue-on-error: true
         env:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
         run: |
-          # Determine slot based on current hour (UTC)
-          HOUR=$(date -u +%H)
-          if [ "$HOUR" -eq 02 ]; then
-            SLOT="morning"
-          elif [ "$HOUR" -eq 08 ]; then
-            SLOT="afternoon"
-          elif [ "$HOUR" -eq 13 ]; then
-            SLOT="evening"
-          else
-            SLOT="morning" # Default for workflow_dispatch
-          fi
-          echo "Running for slot: $SLOT"
-          node automate.mjs --slot=$SLOT
+          TODAY=$(date -u +%Y-%m-%d)
+          echo "📅 Processing Morning Video for date: $TODAY"
+          node automate.mjs --slot=morning --schedule="${TODAY}T03:30:00Z"
+
+      - name: Render Afternoon Video
+        continue-on-error: true
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+        run: |
+          TODAY=$(date -u +%Y-%m-%d)
+          echo "☀️ Processing Afternoon Video for date: $TODAY"
+          node automate.mjs --slot=afternoon --schedule="${TODAY}T08:30:00Z"
+
+      - name: Render Evening Video
+        continue-on-error: true
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+        run: |
+          TODAY=$(date -u +%Y-%m-%d)
+          echo "🌆 Processing Evening Video for date: $TODAY"
+          node automate.mjs --slot=evening --schedule="${TODAY}T13:30:00Z"
+
+      - name: Commit and Push changes
+        if: always()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add puzzles.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: persist puzzle state and replenish stock" && git push)

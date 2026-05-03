@@ -3,9 +3,11 @@ import { PuzzleVideo } from "./PuzzleVideo";
 
 export const RemotionRoot = () => {
   // Logic to calculate duration based on moves
+  // Phase 1: 1s, Phase 2: 2s, Phase 3: 4s, Phase 4: 1.5s per move
   const calculateDuration = (moves) => {
     const solutionMovesCount = Math.max(0, (moves?.length || 0) - 1);
-    return 30 + 150 + solutionMovesCount * 60 + 60;
+    const totalDurationInSeconds = 1 + 2 + 4 + solutionMovesCount * 1.5 + 2; // +2s buffer at end
+    return Math.ceil(totalDurationInSeconds * 30);
   };
 
   return (
@@ -14,8 +16,8 @@ export const RemotionRoot = () => {
         id="ChessShort"
         component={PuzzleVideo}
         fps={30}
-        width={1080}
-        height={1920}
+        width={2160}
+        height={3840}
         calculateMetadata={({ props }) => {
           const duration = calculateDuration(props.puzzleMoves);
           return {

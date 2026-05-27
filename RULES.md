@@ -1,49 +1,40 @@
-# Chess Automation: Best Practices & Rules
+# Chess Automation: Viral Instantly Protocol
 
-To ensure the stability and quality of the automated chess puzzle system, follow these rules and guidelines.
+To ensure 100% virality and "scroll-stopping" quality for chess content, follow these high-performance rules.
 
-## 1. Chess Puzzle Logic
-- **Initial FEN**: The `initialFen` represents the board position **before** the opponent makes their mistake.
-- **Move Sequence**: 
-  - `puzzleMoves[0]` is always the **opponent's move**. It must be applied first before showing the puzzle to the user.
-  - `puzzleMoves[1+]` are the **solution moves** to be animated after the thinking phase.
-- **Format**: All moves must be in **UCI format** (e.g., `e2e4`, `d7d5`).
-- **Promotions**: Always include a promotion character (`q`) as a fallback for pawn promotion moves (e.g., `a7a8q`).
+## 1. Chess Puzzle Logic (The Challenge)
+- **Initial FEN**: Must represent the critical position **before** the blunder.
+- **Forced Mate**: Only use puzzles with forced checkmate sequences.
+- **Complexity**: Prefer "Mate in 2" or "Mate in 3" for quick social media consumption.
 
-## 2. Move Validation & Deduplication
-- **Legality Check**: Load the `initialFen` into `chess.js` and apply every move in `puzzleMoves` sequentially.
-- **FEN-based Deduplication**: NEVER add a puzzle to the database if its board position (`initialFen`) has already been used. This prevents repetition even if IDs are different.
-- **Immediate Persistence**: Mark a puzzle as `used` **immediately after successful validation**, before rendering begins. This prevents repetition if the render/upload fails mid-process.
+## 2. Visual Excellence (The Aesthetic)
+- **Resolution**: ALWAYS render at **4K Vertical (2160 x 3840)**.
+- **Board Pulsing**: Use a subtle glow animation during the "thinking" phase to maintain visual interest.
+- **Motion**: Apply a slow Ken Burns zoom to the background image.
+- **Board Colors**: Rotate board colors using the `THEME_POOL` to keep the feed fresh.
 
-## 3. Video Rendering Rules (YouTube Shorts)
-- **Resolution**: Always render at **4K vertical resolution** (2160 x 3840).
-- **Framerate**: Always render at **30 fps**.
-- **Audio**: Always include `audioCodec: "aac"` and move the `Audio` component to the top of the React tree to ensure it initializes correctly.
-- **Background Assets**: Use the custom background images (`morning_bg.png`, `afternoon_bg.png`, `evening_bg.png`, `midnight_bg.png`) corresponding to the theme.
-- **Timeline**: The initial board position (after the opponent's mistake) MUST be displayed for exactly **4 seconds** before the solution moves begin animating.
+## 3. Audio Engineering (The Retention)
+- **Satisfying Sounds**: Use high-quality "Click" or "Thud" sounds for moves.
+- **Check/Mate Sounds**: Use distinct, impactful sounds for checks and checkmates.
+- **Tension Ticking**: Add an audible clock tick during the 4-second "thinking" phase.
+- **Celebration**: Play a "Win" sound effect when the puzzle is solved.
 
-## 4. Automation & Scheduling
-- **Run Schedule**: The automation runs once daily at **6:00 AM IST** (00:30 UTC).
-- **Triple Upload**: A single run generates and uploads all 3 videos for the day.
-- **YouTube Scheduling**: Videos must be scheduled for:
-  - **Morning**: 9:00 AM IST
-  - **Afternoon**: 2:00 PM IST
-  - **Evening**: 7:00 PM IST
-- **Visibility**: Set videos to `private` during scheduling; they will automatically flip to `public` at the scheduled time.
+## 4. Rendering Timeline
+- **Hook Overlay**: 0s - 2s (Display "BRILLIANT MATE IN X" with intense glow).
+- **Thinking Phase**: 2s - 6s (Board displayed with ticking sound and pulsing glow).
+- **Solution Phase**: 6s - Finish (Moves animate with sounds).
+- **Outro CTA**: Show "DID YOU FIND IT? SUBSCRIBE!" during the final celebration.
 
-## 5. Theme Variety (Dynamic Theme Engine)
-- **Variations**: Do not use the same title or colors every day. Use the `THEME_POOL` in `automate.mjs` to rotate titles and board colors.
-- **Metadata**: Titles and descriptions must include unique hooks (e.g., "INSANE", "BRILLIANT") and relevant hashtags.
+## 5. Metadata Strategy (SEO Hooks)
+- **Titles**: Use "Hook-First" titles (e.g., "99% MISS THIS BRILLIANT MATE 🧠 #chess #shorts").
+- **Description**: Include the FEN and full move sequence for searchability.
 
-## 6. Stock & Database Management
-- **Target Buffer**: Maintain at least **15 unused puzzles** per session slot (45 total).
-- **ID Uniqueness**: Prefix external IDs (e.g., `polgar_123`) to avoid collisions.
-- **Replenishment**: Run `node replenish.mjs` daily to maintain stock health.
+## 6. Automation & Persistence
+- **State**: Mark puzzles as `used` immediately after successful validation.
+- **Stock**: Maintain 45+ unused puzzles to ensure a 15-day buffer.
+- **Run**: Automated 6:00 AM IST daily via GitHub Actions.
 
-## 7. GitHub Actions
-- **Permissions**: The workflow must have `contents: write` permissions to commit `puzzles.json` changes back to the repository.
-- **Persistence**: Ensure `puzzles.json` is committed and pushed after every successful run.
+## 7. Execution
+- **Preview**: `npm run dev`
+- **Viral Render**: `node automate.mjs` (Generates 3x daily videos).
 
-## 8. Debugging Tools
-- Use `scratch/verify_puzzles.mjs` to scan the database for invalid sequences.
-- Use `node automate.mjs --dry-run` to test selection and metadata generation without spending resources.

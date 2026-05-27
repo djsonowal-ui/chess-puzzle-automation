@@ -25,10 +25,11 @@ export const PuzzleVideo = ({
   const pauseEnd = 180; // 4s Pause (Total 6s before moves)
   const moveInterval = 45; // 1.5s per move
 
-  const { currentFen, phase, resultMetadata, solutionIndex } = useMemo(() => {
+  const { currentFen, phase, resultMetadata, solutionIndex, isCheck } = useMemo(() => {
     const game = new Chess(initialFen);
     let currentPhase = "HOOK";
     let solutionIndex = -1;
+    let isCheck = false;
 
     // Phase 1: Hook (0-2s)
     if (frame < hookEnd) {
@@ -48,7 +49,8 @@ export const PuzzleVideo = ({
       for (let i = 0; i <= solutionIndex && i < puzzleMoves.length; i++) {
         try {
           const m = puzzleMoves[i];
-          game.move({ from: m.substring(0, 2), to: m.substring(2, 4), promotion: "q" });
+          const result = game.move({ from: m.substring(0, 2), to: m.substring(2, 4), promotion: "q" });
+          isCheck = result.flags.includes("c") || result.flags.includes("k");
         } catch (e) {
           console.error("Invalid move:", puzzleMoves[i]);
         }
@@ -65,7 +67,7 @@ export const PuzzleVideo = ({
        }
     }
 
-    return { currentFen: game.fen(), phase: currentPhase, resultMetadata, solutionIndex };
+    return { currentFen: game.fen(), phase: currentPhase, resultMetadata, solutionIndex, isCheck };
   }, [frame, initialFen, puzzleMoves, colors.dark]);
 
   const isFinished = !!resultMetadata;
@@ -78,12 +80,15 @@ export const PuzzleVideo = ({
   });
 
   const celebrationSpring = spring({
-    frame: frame - (pauseEnd + (puzzleMoves.length - 1) * moveInterval + 15), // Starts right after last move finishes
+    frame: frame - (pauseEnd + (puzzleMoves.length - 1) * moveInterval + 15),
     fps,
     config: { stiffness: 100, damping: 10 },
   });
 
   const boardScale = interpolate(boardEntry, [0, 1], [0.85, 1]);
+  
+  // Board Pulsing Glow (Viral tension)
+  const boardPulse = phase === "PAUSE" ? interpolate(Math.sin(frame / 5), [-1, 1], [0.1, 0.4]) : 0;
 
   return (
     <AbsoluteFill
@@ -93,13 +98,23 @@ export const PuzzleVideo = ({
         overflow: "hidden",
       }}
     >
-      {/* Background Music - Moved to top for robustness */}
-      <Audio
-        key="bg-music"
-        src={staticFile("lofi-music.mp3")}
-        volume={0.4}
-        startFrom={0}
-      />
+      {/* Audio Engine */}
+      <Audio key="bg-music" src={staticFile("lofi-music.mp3")} volume={0.4} loop />
+      
+      {/* Tension Ticking (Phase 2) */}
+      {frame >= hookEnd && frame < pauseEnd && (frame % 30 === 0) && (
+        <Audio src={staticFile("tick.mp3")} volume={0.3} />
+      )}
+
+      {/* Move Sounds */}
+      {phase === "SOLUTION" && (frame - pauseEnd) % moveInterval === 0 && (
+        <Audio src={staticFile(isCheck ? "check.mp3" : "move.mp3")} volume={0.8} />
+      )}
+
+      {/* Win Sound */}
+      {isFinished && (frame === pauseEnd + (puzzleMoves.length - 1) * moveInterval + 15) && (
+        <Audio src={staticFile("win.mp3")} volume={1} />
+      )}
 
       {/* Dynamic Background Image */}
       <img 
@@ -110,6 +125,7 @@ export const PuzzleVideo = ({
           height: "100%",
           objectFit: "cover",
           opacity: 0.6,
+          transform: `scale(${interpolate(frame, [0, 600], [1, 1.1])})` // Slow Ken Burns
         }}
         alt="background"
       />
@@ -126,7 +142,7 @@ export const PuzzleVideo = ({
         style={{
           position: "absolute",
           inset: 0,
-          background: `radial-gradient(circle at center, ${colors.dark}33 0%, transparent 70%)`,
+          background: `radial-gradient(circle at center, ${colors.dark}${Math.floor(boardPulse * 255).toString(16).padStart(2, '0')} 0%, transparent 70%)`,
         }}
       />
       
@@ -152,26 +168,26 @@ export const PuzzleVideo = ({
             gravity={0.4}
           />
           
-          {/* Outro CTA */}
           <div style={{
             position: "absolute",
-            bottom: 300,
+            bottom: 400,
             width: "100%",
             display: "flex",
             justifyContent: "center",
             zIndex: 100,
-            opacity: interpolate(frame, [pauseEnd + (puzzleMoves.length - 1) * moveInterval + 30, pauseEnd + (puzzleMoves.length - 1) * moveInterval + 45], [0, 1], { extrapolateRight: "clamp" }),
-            transform: `translateY(${interpolate(frame, [pauseEnd + (puzzleMoves.length - 1) * moveInterval + 30, pauseEnd + (puzzleMoves.length - 1) * moveInterval + 45], [50, 0], { extrapolateRight: "clamp" })}px)`
+            opacity: celebrationSpring,
+            transform: `translateY(${(1 - celebrationSpring) * 100}px)`
           }}>
             <h2 style={{
               color: "white",
-              fontSize: 70,
-              fontWeight: 800,
-              background: "rgba(0,0,0,0.8)",
-              padding: "40px 80px",
-              borderRadius: 40,
-              boxShadow: "0 20px 40px rgba(0,0,0,0.5)",
-              border: "4px solid rgba(255,255,255,0.2)"
+              fontSize: 100,
+              fontWeight: 900,
+              background: "rgba(0,0,0,0.85)",
+              padding: "60px 120px",
+              borderRadius: 60,
+              boxShadow: `0 40px 80px rgba(0,0,0,0.8), 0 0 60px ${colors.dark}66`,
+              border: "6px solid rgba(255,255,255,0.1)",
+              textShadow: "0 10px 20px rgba(0,0,0,0.5)"
             }}>
               DID YOU FIND IT? SUBSCRIBE! 👇
             </h2>
@@ -192,13 +208,14 @@ export const PuzzleVideo = ({
         }}>
            <h1 style={{
              color: "#FFD700",
-             fontSize: 160,
+             fontSize: 220,
              fontWeight: 900,
              textAlign: "center",
              padding: "0 100px",
              textTransform: "uppercase",
-             lineHeight: 1.2,
-             textShadow: "0 0 100px rgba(255,215,0,0.5)",
+             lineHeight: 1.1,
+             textShadow: "0 0 100px rgba(255,215,0,0.6)",
+             transform: `scale(${interpolate(frame, [0, 60], [0.8, 1])})`
            }}>{hookText}</h1>
         </div>
       )}
@@ -222,27 +239,28 @@ export const PuzzleVideo = ({
           alignItems: "center",
           justifyContent: "flex-end",
           marginBottom: 150,
-          opacity: interpolate(frame, [0, 30], [0, 1]),
+          opacity: boardEntry,
         }}>
           {!isFinished && (
             <>
               <h2 style={{
                 color: colors.dark,
-                fontSize: 80,
-                letterSpacing: 8,
+                fontSize: 100,
+                fontWeight: 900,
+                letterSpacing: 12,
                 textTransform: "uppercase",
                 margin: 0,
-                opacity: 0.8,
+                opacity: 0.9,
               }}>
                 {sessionTitle} — MATE IN {mateCount}
               </h2>
               <h1 style={{
                 color: "white",
-                fontSize: 120,
+                fontSize: 140,
                 fontWeight: 900,
                 textAlign: "center",
                 margin: "40px 0 0 0",
-                textShadow: "0 0 50px rgba(255,255,255,0.3)",
+                textShadow: "0 10px 40px rgba(0,0,0,0.8)",
               }}>
                 {phase === "SOLUTION" ? "SOLUTION REVEALED" : 
                  phase === "PAUSE" ? "PAUSE AND FIND THE MATE!" : ""}
@@ -255,18 +273,17 @@ export const PuzzleVideo = ({
         <div style={{
           position: "relative",
           width: width * 0.9,
-          maxWidth: 1800,
           transform: `scale(${boardScale})`,
-          boxShadow: `0 80px 160px rgba(0,0,0,0.7), 0 0 80px ${colors.dark}33`,
-          borderRadius: 32,
+          boxShadow: `0 100px 200px rgba(0,0,0,0.8), 0 0 100px ${colors.dark}44`,
+          borderRadius: 48,
           overflow: "hidden",
-          border: "8px solid rgba(255,255,255,0.05)",
+          border: "12px solid rgba(255,255,255,0.08)",
         }}>
           <Chessboard
             position={currentFen}
             boardOrientation={playerColor}
             id="PremiumBoard4K"
-            animationDuration={400}
+            animationDuration={300}
             customDarkSquareStyle={{ backgroundColor: colors.dark }}
             customLightSquareStyle={{ backgroundColor: colors.light }}
           />
@@ -274,7 +291,7 @@ export const PuzzleVideo = ({
 
         {/* Footer Info */}
         <div style={{
-          marginTop: 180,
+          marginTop: 200,
           height: 400,
           display: "flex",
           flexDirection: "column",
@@ -283,19 +300,20 @@ export const PuzzleVideo = ({
         }}>
           {!isFinished ? (
             <div style={{
-              padding: "32px 80px",
-              background: "rgba(255,255,255,0.05)",
+              padding: "48px 120px",
+              background: "rgba(255,255,255,0.08)",
               borderRadius: 200,
-              border: "2px solid rgba(255,255,255,0.1)",
-              backdropFilter: "blur(20px)",
+              border: "4px solid rgba(255,255,255,0.15)",
+              backdropFilter: "blur(40px)",
               opacity: boardEntry,
+              boxShadow: "0 20px 60px rgba(0,0,0,0.4)"
             }}>
               <span style={{
                 color: "white",
-                fontSize: 64,
-                fontWeight: 700,
+                fontSize: 80,
+                fontWeight: 900,
                 textTransform: "uppercase",
-                letterSpacing: 4,
+                letterSpacing: 6,
               }}>
                  {playerColor === "white" ? "⚪ White to Move" : "⚫ Black to Move"}
               </span>
@@ -308,18 +326,18 @@ export const PuzzleVideo = ({
               alignItems: "center",
             }}>
                <div style={{
-                 padding: "40px 100px",
-                 background: "rgba(255,215,0,0.1)",
-                 borderRadius: 40,
-                 border: `4px solid ${resultMetadata?.color || "#FFD700"}`,
-                 backdropFilter: "blur(40px)",
-                 boxShadow: `0 0 80px rgba(255,215,0,0.3)`,
+                 padding: "60px 140px",
+                 background: "rgba(255,215,0,0.15)",
+                 borderRadius: 60,
+                 border: `8px solid ${resultMetadata?.color || "#FFD700"}`,
+                 backdropFilter: "blur(60px)",
+                 boxShadow: `0 0 120px rgba(255,215,0,0.4)`,
                }}>
                  <span style={{
                    color: resultMetadata?.color || "white",
-                   fontSize: 160,
+                   fontSize: 200,
                    fontWeight: 900,
-                   letterSpacing: 16,
+                   letterSpacing: 20,
                    textTransform: "uppercase",
                  }}>
                    {resultMetadata?.text || "SOLVED"}
@@ -336,12 +354,13 @@ export const PuzzleVideo = ({
         position: "absolute",
         bottom: 0,
         left: 0,
-        height: 24,
+        height: 32,
         backgroundColor: colors.dark,
         width: `${(frame / useVideoConfig().durationInFrames) * 100}%`,
-        boxShadow: `0 0 40px ${colors.dark}AA`,
+        boxShadow: `0 0 60px ${colors.dark}`,
       }} />
       
     </AbsoluteFill>
   );
 };
+

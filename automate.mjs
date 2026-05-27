@@ -1,5 +1,6 @@
 import { bundle } from "@remotion/bundler";
 import { selectComposition, renderMedia } from "@remotion/renderer";
+
 import { google } from "googleapis";
 import path from "path";
 import fs from "fs";
@@ -70,9 +71,10 @@ function getActiveSession() {
   return { 
     slot, 
     theme: variation,
-    mateCount: slot === "morning" ? 2 : slot === "afternoon" ? 3 : 4
+    mateCount: (slot === "morning") ? 2 : 3 // Evening also uses Mate in 3 from Polgar
   };
 }
+
 
 const sessionData = getActiveSession();
 const activeSessionKey = sessionData.slot;
@@ -117,7 +119,7 @@ function generateSEOMetadata(theme, puzzleData) {
 
 // --- RENDERING LOGIC ---
 async function renderPuzzle(puzzleData, hookText) {
-  console.log(`🚀 Rendering ${theme.title} (Mate in ${theme.mateCount})...`);
+  console.log(`🚀 Rendering ${theme.title} (Mate in ${requiredMateCount})...`);
   
   if (process.env.FFMPEG_PATH && process.env.FFMPEG_PATH !== 'ffmpeg') {
     process.env.FFMPEG_PATH = path.resolve(process.env.FFMPEG_PATH);
@@ -199,6 +201,18 @@ async function uploadToYouTube(filePath, metadata) {
       },
     },
     media: { body: fs.createReadStream(filePath) },
+  }).catch(err => {
+    if (err.errors) {
+      const details = err.errors[0];
+      if (details.reason === "quotaExceeded") {
+        throw new Error("🚀 YOUTUBE QUOTA EXCEEDED: You have hit the daily upload limit for this Google Cloud project.");
+      }
+      if (details.reason === "invalid_grant" || details.reason === "unauthorized") {
+        throw new Error("🔐 YOUTUBE AUTH FAILED: Refresh token is expired or invalid. Please run 'node get_token.mjs' and update your secrets.");
+      }
+      throw new Error(`📡 YOUTUBE API ERROR (${details.reason}): ${details.message}`);
+    }
+    throw err;
   });
 
   if (publishAt) {
@@ -208,6 +222,7 @@ async function uploadToYouTube(filePath, metadata) {
   }
   return response.data;
 }
+
 
 // --- VALIDATION LOGIC ---
 import { Chess } from "chess.js";
@@ -269,6 +284,7 @@ async function main() {
   try {
     const isDryRun = process.argv.includes("--dry-run");
     if (isDryRun) console.log("🧪 DRY RUN MODE ENABLED. No rendering or uploading.");
+
 
     const puzzleData = await getSessionPuzzle(activeSessionKey, requiredMateCount);
     

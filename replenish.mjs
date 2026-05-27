@@ -58,7 +58,7 @@ async function replenish() {
   const sessions = [
     { name: "morning", mateCount: 2, polgarType: "Mate in Two" },
     { name: "afternoon", mateCount: 3, polgarType: "Mate in Three" },
-    { name: "evening", mateCount: 4, polgarType: "Mate in Three" } // Fallback to Mate 3 for now
+    { name: "evening", mateCount: 3, polgarType: "Mate in Three" }
   ];
 
   let addedCount = 0;

@@ -1,10 +1,16 @@
 name: Daily Chess Automation
 
 on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'puzzles.json'
   schedule:
     # 6 AM IST (00:30 UTC) - Run once daily
     - cron: '30 0 * * *'
   workflow_dispatch: # Allow manual triggering
+
 
 # Permissions needed to commit changes back to the repository
 permissions:

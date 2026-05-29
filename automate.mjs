@@ -178,7 +178,13 @@ async function uploadToYouTube(filePath, metadata) {
   }
 
   const scheduleArg = process.argv.find(arg => arg.startsWith("--schedule="));
-  const publishAt = scheduleArg ? scheduleArg.split("=")[1] : null;
+  let publishAt = scheduleArg ? scheduleArg.split("=")[1] : null;
+
+  if (publishAt && new Date(publishAt) < new Date()) {
+    console.warn(`⚠️ Scheduled time ${publishAt} is in the past. Uploading as PUBLIC immediately instead.`);
+    publishAt = null;
+  }
+
 
   console.log("☁️ Uploading to YouTube...");
   const oauth2Client = new google.auth.OAuth2(GOOGLE_AUTH_CONFIG.clientId, GOOGLE_AUTH_CONFIG.clientSecret);

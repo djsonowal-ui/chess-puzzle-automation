@@ -90,6 +90,44 @@ export const PuzzleVideo = ({
   // Board Pulsing Glow (Viral tension)
   const boardPulse = phase === "PAUSE" ? interpolate(Math.sin(frame / 5), [-1, 1], [0.1, 0.4]) : 0;
 
+  // Calculate dynamic arrow color based on active theme
+  const arrowColor = useMemo(() => {
+    if (bg.includes("morning")) {
+      return "rgba(255, 110, 0, 0.85)"; // Warm Sunrise Orange
+    }
+    if (bg.includes("afternoon")) {
+      return "rgba(255, 215, 0, 0.85)"; // Premium Golden Yellow
+    }
+    return "rgba(0, 255, 255, 0.85)"; // Electric Cyan
+  }, [bg]);
+
+  // Compute arrow tuple [from, to, color]
+  const lastMoveArrow = useMemo(() => {
+    if (phase !== "SOLUTION" || solutionIndex < 0) return null;
+    const moveIdx = Math.min(solutionIndex, puzzleMoves.length - 1);
+    const m = puzzleMoves[moveIdx];
+    if (!m || m.length < 4) return null;
+    return [m.substring(0, 2), m.substring(2, 4), arrowColor];
+  }, [phase, solutionIndex, puzzleMoves, arrowColor]);
+
+  // Compute soft square highlights for the last move
+  const lastMoveSquareStyles = useMemo(() => {
+    if (phase !== "SOLUTION" || solutionIndex < 0) return {};
+    const moveIdx = Math.min(solutionIndex, puzzleMoves.length - 1);
+    const m = puzzleMoves[moveIdx];
+    if (!m || m.length < 4) return {};
+    
+    const fromSquare = m.substring(0, 2);
+    const toSquare = m.substring(2, 4);
+    
+    const highlightColor = arrowColor.replace("0.85", "0.15"); // Soften opacity for highlight
+
+    return {
+      [fromSquare]: { backgroundColor: highlightColor },
+      [toSquare]: { backgroundColor: highlightColor },
+    };
+  }, [phase, solutionIndex, puzzleMoves, arrowColor]);
+
   return (
     <AbsoluteFill
       style={{
@@ -286,6 +324,8 @@ export const PuzzleVideo = ({
             animationDuration={300}
             customDarkSquareStyle={{ backgroundColor: colors.dark }}
             customLightSquareStyle={{ backgroundColor: colors.light }}
+            customArrows={lastMoveArrow ? [lastMoveArrow] : []}
+            customSquareStyles={lastMoveSquareStyles}
           />
         </div>
 

@@ -1572,8 +1572,9 @@
       "g3f5"
     ],
     "playerColor": "white",
-    "used": false,
-    "addedDate": "2026-05-22T04:46:26.900Z"
+    "used": true,
+    "addedDate": "2026-05-22T04:46:26.900Z",
+    "lastUsed": "2026-05-30T09:26:38.641Z"
   },
   {
     "id": "polgar_4105",

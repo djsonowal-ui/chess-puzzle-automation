@@ -2,7 +2,7 @@ import { bundle } from "@remotion/bundler";
 import { selectComposition, renderMedia } from "@remotion/renderer";
 import path from "path";
 import dotenv from "dotenv";
-import { fetchDailyPuzzle } from "./src/utils/fetch-puzzle.mjs";
+import { getSessionPuzzle } from "./src/utils/fetch-puzzle.mjs";
 
 dotenv.config();
 
@@ -18,7 +18,7 @@ const start = async () => {
   // 1. Fetch Dynamic Puzzle
   let puzzleData;
   try {
-    puzzleData = await fetchDailyPuzzle();
+    puzzleData = await getSessionPuzzle("morning", 2);
   } catch (e) {
     console.warn("⚠️ Failed to fetch Lichess puzzle, using fallback.");
     puzzleData = {
@@ -51,6 +51,7 @@ const start = async () => {
     composition,
     serveUrl: bundleLocation,
     codec: "h264",
+    audioCodec: "aac",
     outputLocation: "output.mp4",
     inputProps: puzzleData,
     videoBitrate: "50M",

@@ -137,21 +137,21 @@ export const PuzzleVideo = ({
       }}
     >
       {/* Audio Engine */}
-      <Audio key="bg-music" src={staticFile("lofi-music.mp3")} volume={0.4} loop />
+      <Audio key="bg-music" src={staticFile("lofi-music.mp3")} volume={0.25} loop />
       
       {/* Tension Ticking (Phase 2) */}
       {frame >= hookEnd && frame < pauseEnd && (frame % 30 === 0) && (
-        <Audio src={staticFile("tick.mp3")} volume={0.3} />
+        <Audio src={staticFile("tick.mp3")} volume={0.15} />
       )}
 
       {/* Move Sounds */}
       {phase === "SOLUTION" && (frame - pauseEnd) % moveInterval === 0 && (
-        <Audio src={staticFile(isCheck ? "check.mp3" : "move.mp3")} volume={0.8} />
+        <Audio src={staticFile(isCheck ? "check.mp3" : "move.mp3")} volume={0.5} />
       )}
 
       {/* Win Sound */}
       {isFinished && (frame === pauseEnd + (puzzleMoves.length - 1) * moveInterval + 15) && (
-        <Audio src={staticFile("win.mp3")} volume={1} />
+        <Audio src={staticFile("win.mp3")} volume={0.7} />
       )}
 
       {/* Dynamic Background Image */}

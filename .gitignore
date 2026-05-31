@@ -26,3 +26,9 @@ yarn-error.log*
 
 # Environment
 .env*
+
+# Temporary scratch files
+scratch/
+
+# Video trivia outputs and logs
+output_player_*

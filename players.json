@@ -1,0 +1,308 @@
+[
+  {
+    "fideId": "1503014",
+    "username": "magnuscarlsen",
+    "name": "Magnus Carlsen",
+    "flag": "🇳🇴",
+    "achievements": [
+      "🏆 5x Classical World Champion",
+      "🎯 Highest FIDE rating in history: 2882",
+      "🔥 Holds a 125-game unbeaten streak",
+      "👑 Undisputed World Blitz & Rapid King"
+    ],
+    "playstyle": {
+      "tactics": 96,
+      "endgame": 99,
+      "positional": 99,
+      "speed": 98
+    }
+  },
+  {
+    "fideId": "2016192",
+    "username": "hikaru",
+    "name": "Hikaru Nakamura",
+    "flag": "🇺🇸",
+    "achievements": [
+      "🏆 5x United States Champion",
+      "⚡ Unofficial king of Speed Chess",
+      "👑 FIDE World Fischer Random Champion",
+      "🎥 The world's top Chess Streamer"
+    ],
+    "playstyle": {
+      "tactics": 98,
+      "endgame": 95,
+      "positional": 96,
+      "speed": 99
+    }
+  },
+  {
+    "fideId": "5000017",
+    "username": "vishy",
+    "name": "Viswanathan Anand",
+    "flag": "🇮🇳",
+    "achievements": [
+      "🏆 5x World Chess Champion",
+      "♟️ India's first-ever Grandmaster",
+      "⚡ Legendary speed - 'The Lightning Kid'",
+      "🌟 Global Chess Icon & Hall of Famer"
+    ],
+    "playstyle": {
+      "tactics": 97,
+      "endgame": 96,
+      "positional": 95,
+      "speed": 97
+    }
+  },
+  {
+    "fideId": "2020009",
+    "username": "fabiano",
+    "name": "Fabiano Caruana",
+    "flag": "🇺🇸",
+    "achievements": [
+      "🏆 3rd Highest FIDE rating in history: 2844",
+      "⚔️ 2018 World Chess Challenger",
+      "🔥 Won Sinquefield Cup with 7/7 start",
+      "🧠 Renowned for deep openings prep"
+    ],
+    "playstyle": {
+      "tactics": 97,
+      "endgame": 96,
+      "positional": 98,
+      "speed": 93
+    }
+  },
+  {
+    "fideId": "46616543",
+    "username": "gukesh",
+    "name": "Gukesh D",
+    "flag": "🇮🇳",
+    "achievements": [
+      "🏆 Youngest Candidates Winner in history",
+      "👑 2024 World Championship Challenger",
+      "♟️ 3rd youngest Grandmaster in history",
+      "💪 Famous for extreme nerve under pressure"
+    ],
+    "playstyle": {
+      "tactics": 98,
+      "endgame": 95,
+      "positional": 96,
+      "speed": 94
+    }
+  },
+  {
+    "fideId": "3504743",
+    "username": "pragg",
+    "name": "Praggnanandhaa R",
+    "flag": "🇮🇳",
+    "achievements": [
+      "🏆 Youngest International Master at age 10",
+      "🔥 Defeated Magnus Carlsen multiple times",
+      "🥈 2023 FIDE World Cup Runner-up",
+      "🧠 Brilliant tactical prodigy"
+    ],
+    "playstyle": {
+      "tactics": 99,
+      "endgame": 94,
+      "positional": 95,
+      "speed": 96
+    }
+  },
+  {
+    "fideId": "8603677",
+    "username": "dingliren",
+    "name": "Ding Liren",
+    "flag": "🇨🇳",
+    "achievements": [
+      "🏆 17th Undisputed World Champion",
+      "🔥 Holds a 100-game unbeaten streak",
+      "🥇 First-ever Chinese World Champion",
+      "🎯 Peak classical FIDE rating of 2816"
+    ],
+    "playstyle": {
+      "tactics": 96,
+      "endgame": 97,
+      "positional": 98,
+      "speed": 93
+    }
+  },
+  {
+    "fideId": "12573981",
+    "username": "firouzja",
+    "name": "Alireza Firouzja",
+    "flag": "🇫🇷",
+    "achievements": [
+      "⚡ Youngest player to cross 2800 FIDE (18)",
+      "👑 Multiple-time Bullet Chess Champion",
+      "♟️ Won Grand Chess Tour in 2022",
+      "🔥 Hyper-aggressive attacking playstyle"
+    ],
+    "playstyle": {
+      "tactics": 99,
+      "endgame": 93,
+      "positional": 92,
+      "speed": 99
+    }
+  },
+  {
+    "fideId": "35009192",
+    "username": "arjun",
+    "name": "Arjun Erigaisi",
+    "flag": "🇮🇳",
+    "achievements": [
+      "🏆 Reached standard FIDE Elo rating of 2800+",
+      "👑 Reached World No. 2 in FIDE live ratings",
+      "♟️ 2022 Indian National Chess Champion",
+      "🔥 Famous for extremely creative and aggressive play"
+    ],
+    "playstyle": {
+      "tactics": 98,
+      "endgame": 96,
+      "positional": 95,
+      "speed": 97
+    }
+  },
+  {
+    "fideId": "5029465",
+    "username": "vidit",
+    "name": "Vidit Gujrathi",
+    "flag": "🇮🇳",
+    "achievements": [
+      "🏆 Winner of the 2023 FIDE Grand Swiss",
+      "♟️ 4th Indian chess player to cross 2700 Elo",
+      "🥇 Captain of historic Gold-winning Olympiad team",
+      "🧠 Renowned for crystal-clear positional play"
+    ],
+    "playstyle": {
+      "tactics": 95,
+      "endgame": 95,
+      "positional": 97,
+      "speed": 94
+    }
+  },
+  {
+    "fideId": "25092340",
+    "username": "nihalsarin",
+    "name": "Nihal Sarin",
+    "flag": "🇮🇳",
+    "achievements": [
+      "🏆 FIDE Online World Youth Champion 2020",
+      "⚡ Recognized as one of the world's fastest blitz players",
+      "♟️ Reached peak Standard Elo over 2690+",
+      "🌟 Prolific Chess.com Speed Chess Champion"
+    ],
+    "playstyle": {
+      "tactics": 97,
+      "endgame": 96,
+      "positional": 94,
+      "speed": 99
+    }
+  },
+  {
+    "fideId": "4168119",
+    "username": "nepomniachtchi",
+    "name": "Ian Nepomniachtchi",
+    "flag": "🇷🇺",
+    "achievements": [
+      "🏆 2x World Championship Challenger (2021, 2023)",
+      "👑 Winner of back-to-back Candidates Tournaments",
+      "⚡ Former World Rapid & Blitz Silver Medalist",
+      "🔥 Highly aggressive, intuitive attacking genius"
+    ],
+    "playstyle": {
+      "tactics": 98,
+      "endgame": 94,
+      "positional": 96,
+      "speed": 98
+    }
+  },
+  {
+    "fideId": "35006916",
+    "username": "divya",
+    "name": "Divya Deshmukh",
+    "flag": "🇮🇳",
+    "achievements": [
+      "🏆 India's 88th Grandmaster (GM) since 2025",
+      "👑 2024 World Junior Girls Chess Champion",
+      "♟️ 2022 Indian Women's Chess Champion",
+      "🥇 Double Gold medalist at the 2024 Olympiad"
+    ],
+    "playstyle": {
+      "tactics": 96,
+      "endgame": 93,
+      "positional": 94,
+      "speed": 95
+    }
+  },
+  {
+    "fideId": "5007844",
+    "username": "tania",
+    "name": "Tania Sachdev",
+    "flag": "🇮🇳",
+    "achievements": [
+      "🏆 2-time Indian Women's Chess Champion",
+      "⚡ Recipient of the prestigious Arjuna Award",
+      "🎤 Popular global Chess.com commentator & presenter",
+      "🥉 Bronze medalist at the 2022 Women's Chess Olympiad"
+    ],
+    "playstyle": {
+      "tactics": 93,
+      "endgame": 92,
+      "positional": 95,
+      "speed": 93
+    }
+  },
+  {
+    "fideId": "5022509",
+    "username": "sagarshah",
+    "name": "Sagar Shah",
+    "flag": "🇮🇳",
+    "achievements": [
+      "♟️ FIDE International Master (IM) and Coach",
+      "🎥 Co-founder and face of ChessBase India",
+      "🌟 Foremost promoter of chess in India",
+      "🎤 Renowned commentator, analyst, and journalist"
+    ],
+    "playstyle": {
+      "tactics": 92,
+      "endgame": 94,
+      "positional": 94,
+      "speed": 90
+    }
+  },
+  {
+    "fideId": "25050389",
+    "username": "vantika",
+    "name": "Vantika Agrawal",
+    "flag": "🇮🇳",
+    "achievements": [
+      "🏆 Winner of the 2023 Indian Women's Championship",
+      "🥇 Gold medalist at the FIDE Online Chess Olympiad 2020",
+      "♟️ WGM and International Master (IM) title holder",
+      "🔥 Highly tactical and sharp modern fighting style"
+    ],
+    "playstyle": {
+      "tactics": 95,
+      "endgame": 91,
+      "positional": 93,
+      "speed": 94
+    }
+  },
+  {
+    "fideId": "5029295",
+    "username": "padmini",
+    "name": "Padmini Rout",
+    "flag": "🇮🇳",
+    "achievements": [
+      "🏆 4-time consecutive Indian Women's Chess Champion",
+      "🥇 Individual Gold Medal at the 2014 Olympiad",
+      "👑 Former Asian Women's Chess Champion",
+      "♟️ Proud holder of both WGM and IM titles"
+    ],
+    "playstyle": {
+      "tactics": 94,
+      "endgame": 93,
+      "positional": 95,
+      "speed": 92
+    }
+  }
+]

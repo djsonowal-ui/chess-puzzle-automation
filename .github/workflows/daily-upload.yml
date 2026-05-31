@@ -1,0 +1,38 @@
+name: Daily Chess Video Render & Upload
+
+on:
+  schedule:
+    # 8:30 AM IST = 3:00 AM UTC (Daily)
+    - cron: '0 3 * * *'
+  workflow_dispatch: # Allows manual trigger anytime from GitHub UI
+
+jobs:
+  render-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg build-essential libgbm-dev libnss3 libatk-bridge2.0-0 libgtk-3-0 libasound2
+
+      - name: Install Node Modules
+        run: npm ci
+
+      - name: Setup Headless Chrome for Remotion
+        run: npx remotion browser install
+
+      - name: Execute Guess the GM Daily Run
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+        run: node automate-player.mjs

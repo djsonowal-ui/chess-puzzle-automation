@@ -1,5 +1,6 @@
 import { Composition } from "remotion";
 import { PuzzleVideo } from "./PuzzleVideo";
+import { PlayerStatsVideo } from "./PlayerStatsVideo";
 
 export const RemotionRoot = () => {
   // Logic to calculate duration based on moves
@@ -30,6 +31,42 @@ export const RemotionRoot = () => {
           playerColor: "black",
           sessionTitle: "Sunrise Solve",
           colors: { dark: "#b58863", light: "#f0d9b5" }
+        }}
+      />
+
+      <Composition
+        id="PlayerStatsShort"
+        component={PlayerStatsVideo}
+        fps={30}
+        width={2160}
+        height={3840}
+        durationInFrames={660} // Fixed 22 seconds
+        defaultProps={{
+          name: "Magnus Carlsen",
+          flag: "🇳🇴",
+          achievements: [
+            "🏆 5x Classical World Champion",
+            "🎯 Highest FIDE rating in history: 2882",
+            "🔥 Holds a 125-game unbeaten streak",
+            "👑 Undisputed World Blitz & Rapid King"
+          ],
+          playstyle: {
+            tactics: 96,
+            endgame: 99,
+            positional: 99,
+            speed: 98
+          },
+          fideStats: {
+            bYear: "1990",
+            country: "Norway",
+            title: "Grandmaster",
+            ratings: {
+              standard: 2841,
+              rapid: 2832,
+              blitz: 2869
+            },
+            photo: null
+          }
         }}
       />
     </>

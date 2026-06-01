@@ -187,25 +187,25 @@ export const PlayerStatsVideo = ({
           }}
         >
           {/* Main Character Showcase Panel */}
-          <div
-            style={{
-              position: "relative",
-              width: 1000,
-              height: 1100,
-              borderRadius: 48,
-              overflow: "hidden",
-              border: `12px solid ${isRevealed ? accentColor : "rgba(255,255,255,0.15)"}`,
-              boxShadow: `0 80px 160px rgba(0,0,0,0.8), 0 0 80px ${isRevealed ? accentColor + '66' : 'transparent'}`,
-              backgroundColor: "rgba(0,0,0,0.4)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transform: `scale(${photoScale})`,
-              transition: "border-color 0.5s ease",
-            }}
-          >
-            {/* The Photo Base64 Reveal */}
-            {fideStats.photo ? (
+          {fideStats.photo && (
+            <div
+              style={{
+                position: "relative",
+                width: 1000,
+                height: 1100,
+                borderRadius: 48,
+                overflow: "hidden",
+                border: `12px solid ${isRevealed ? accentColor : "rgba(255,255,255,0.15)"}`,
+                boxShadow: `0 80px 160px rgba(0,0,0,0.8), 0 0 80px ${isRevealed ? accentColor + '66' : 'transparent'}`,
+                backgroundColor: "rgba(0,0,0,0.4)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transform: `scale(${photoScale})`,
+                transition: "border-color 0.5s ease",
+              }}
+            >
+              {/* The Photo Base64 Reveal */}
               <img
                 src={fideStats.photo}
                 style={{
@@ -218,41 +218,28 @@ export const PlayerStatsVideo = ({
                 }}
                 alt="GM Profile"
               />
-            ) : (
-              // Silhouette Fallback SVG
-              <svg
-                viewBox="0 0 24 24"
-                style={{
-                  width: "70%",
-                  height: "70%",
-                  fill: isRevealed ? accentColor : "rgba(255,255,255,0.15)",
-                  filter: isRevealed ? "none" : `brightness(0)`,
-                }}
-              >
-                <path d="M12 2a5 5 0 0 0-5 5v2a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5zm0 10c-4.42 0-8 2.24-8 5v5h16v-5c0-2.76-3.58-5-8-5z" />
-              </svg>
-            )}
 
-            {/* Silhouette Mystery Glowing Question Mark */}
-            {!isRevealed && (
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 320,
-                  fontWeight: 900,
-                  color: accentColor,
-                  textShadow: `0 0 100px ${accentColor}`,
-                  opacity: questionMarkOpacity,
-                }}
-              >
-                ?
-              </div>
-            )}
-          </div>
+              {/* Silhouette Mystery Glowing Question Mark */}
+              {!isRevealed && (
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 320,
+                    fontWeight: 900,
+                    color: accentColor,
+                    textShadow: `0 0 100px ${accentColor}`,
+                    opacity: questionMarkOpacity,
+                  }}
+                >
+                  ?
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Interactive Info Panels Container */}
           <div

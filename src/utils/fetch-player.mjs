@@ -127,18 +127,29 @@ export async function getPlayerStats(usernameOrFideId) {
   } catch (err) {
     console.warn(`⚠️ Failed to fetch live FIDE stats: ${err.message}. Using mock/fallback stats.`);
     
+    const FLAG_TO_COUNTRY = {
+      "🇳🇴": { code: "no", name: "Norway" },
+      "🇺🇸": { code: "us", name: "United States" },
+      "🇮🇳": { code: "in", name: "India" },
+      "🇨🇳": { code: "cn", name: "China" },
+      "🇫🇷": { code: "fr", name: "France" },
+      "🇷🇺": { code: "ru", name: "Russia" }
+    };
+
+    const countryInfo = FLAG_TO_COUNTRY[player.flag] || { code: "fide", name: "FIDE" };
+
     // Fallback if network fails
     const fallbackStats = {
       fideId: player.fideId,
       name: player.name,
       bYear: player.fideId === "1503014" ? "1990" : player.fideId === "2016192" ? "1987" : "1995",
-      country: player.fideId === "1503014" ? "Norway" : "FIDE",
-      flagCode: player.fideId === "1503014" ? "no" : "us",
-      title: "Grandmaster",
+      country: countryInfo.name,
+      flagCode: countryInfo.code,
+      title: player.fideId === "5022509" || player.fideId === "5007844" ? "IM" : "Grandmaster", // Distinguish Tania / Sagar IM title
       ratings: {
-        standard: player.fideId === "1503014" ? 2841 : 2780,
-        rapid: player.fideId === "1503014" ? 2832 : 2740,
-        blitz: player.fideId === "1503014" ? 2869 : 2820
+        standard: player.fideId === "1503014" ? 2841 : 2600,
+        rapid: player.fideId === "1503014" ? 2832 : 2580,
+        blitz: player.fideId === "1503014" ? 2869 : 2620
       },
       photo: null // Will display a fallback chess placeholder silhouette in UI
     };

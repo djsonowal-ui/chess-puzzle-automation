@@ -96,8 +96,33 @@ async function renderPlayerVideo(playerData) {
   return path.resolve(outputLocation);
 }
 
+// --- COMMENT POSTER ENGINE ---
+async function postAnswerComment(youtube, videoId, playerName) {
+  try {
+    console.log(`💬 Posting answer comment on video ${videoId}...`);
+    const commentText = `Answer: ${playerName} ♟️ Did you guess it correctly? Let us know in the comments! 👇`;
+    
+    await youtube.commentThreads.insert({
+      part: "snippet",
+      requestBody: {
+        snippet: {
+          videoId: videoId,
+          topLevelComment: {
+            snippet: {
+              textOriginal: commentText
+            }
+          }
+        }
+      }
+    });
+    console.log(`✅ Posted answer comment: "${commentText}"`);
+  } catch (err) {
+    console.error(`⚠️ Failed to post answer comment: ${err.message}`);
+  }
+}
+
 // --- YOUTUBE UPLOADER ENGINE ---
-async function uploadToYouTube(filePath, metadata) {
+async function uploadToYouTube(filePath, metadata, playerName) {
   if (!GOOGLE_AUTH_CONFIG.clientId || GOOGLE_AUTH_CONFIG.clientId.includes("YOUR_")) {
     console.warn("⚠️ Google client configuration is incomplete. Skipping YouTube upload.");
     return null;
@@ -142,6 +167,10 @@ async function uploadToYouTube(filePath, metadata) {
   });
 
   console.log(`\n🎉 Upload successful! Published video ID: ${response.data.id}`);
+
+  // Automatically post the answer comment
+  await postAnswerComment(youtube, response.data.id, playerName);
+
   return response.data;
 }
 
@@ -161,8 +190,8 @@ const runDailyAutomation = async () => {
   // 4. Generate SEO Metadata
   const metadata = generateViralSEOMetadata(playerData);
 
-  // 5. Upload to @puzzlegambit YouTube channel
-  await uploadToYouTube(videoPath, metadata);
+  // 5. Upload to @puzzlegambit YouTube channel & post pinned answer comment
+  await uploadToYouTube(videoPath, metadata, playerData.name);
 };
 
 runDailyAutomation().catch(err => {

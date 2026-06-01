@@ -17,7 +17,10 @@ async function getRefreshToken() {
 
   const authUrl = oauth2Client.generateAuthUrl({
     access_type: "offline",
-    scope: ["https://www.googleapis.com/auth/youtube.upload"],
+    scope: [
+      "https://www.googleapis.com/auth/youtube.upload",
+      "https://www.googleapis.com/auth/youtube.force-ssl"
+    ],
     prompt: "consent", // Force refresh token generation
   });
 

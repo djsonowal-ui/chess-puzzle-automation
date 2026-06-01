@@ -175,14 +175,26 @@ async function uploadToYouTube(filePath, metadata, playerName) {
 }
 
 const runDailyAutomation = async () => {
-  // 1. Select a random player from the registry database
+  // 1. Select a player (parse from args, or fallback to random)
   const playersPath = path.resolve("./players.json");
   const players = JSON.parse(fs.readFileSync(playersPath, "utf-8"));
-  const randomPlayer = players[Math.floor(Math.random() * players.length)];
-  console.log(`🎲 Selected Daily Player: ${randomPlayer.name} (FIDE ID: ${randomPlayer.fideId})`);
+
+  const usernameArg = process.argv.find(arg => arg.startsWith("--username="));
+  let selectedPlayer;
+  if (usernameArg) {
+    const username = usernameArg.split("=")[1].toLowerCase();
+    selectedPlayer = players.find(p => p.username.toLowerCase() === username);
+    if (!selectedPlayer) {
+      throw new Error(`Player username '${username}' not found in players.json`);
+    }
+  } else {
+    selectedPlayer = players[Math.floor(Math.random() * players.length)];
+  }
+
+  console.log(`🎲 Selected Daily Player: ${selectedPlayer.name} (FIDE ID: ${selectedPlayer.fideId})`);
 
   // 2. Fetch monthly stats from FIDE & get Base64 photo
-  const playerData = await getPlayerStats(randomPlayer.username);
+  const playerData = await getPlayerStats(selectedPlayer.username);
 
   // 3. Compile/Render the vertical 4K Short
   const videoPath = await renderPlayerVideo(playerData);

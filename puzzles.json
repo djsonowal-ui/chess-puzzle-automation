@@ -4480,8 +4480,9 @@
       "d3d4"
     ],
     "playerColor": "white",
-    "used": false,
-    "addedDate": "2026-07-14T03:44:54.398Z"
+    "used": true,
+    "addedDate": "2026-07-14T03:44:54.398Z",
+    "lastUsed": "2026-07-31T04:01:01.240Z"
   },
   {
     "id": "polgar_4012",
@@ -5071,8 +5072,9 @@
       "a7e7"
     ],
     "playerColor": "white",
-    "used": false,
-    "addedDate": "2026-07-26T04:07:01.691Z"
+    "used": true,
+    "addedDate": "2026-07-26T04:07:01.691Z",
+    "lastUsed": "2026-07-31T04:03:08.082Z"
   },
   {
     "id": "polgar_3884",
@@ -5280,5 +5282,52 @@
     "used": true,
     "addedDate": "2026-07-30T03:42:14.969Z",
     "lastUsed": "2026-07-30T03:46:56.666Z"
+  },
+  {
+    "id": "polgar_1916",
+    "session": "morning",
+    "mateCount": 2,
+    "initialFen": "8/5p2/6pQ/3K1k2/6N1/7P/8/8 w - - 0 1",
+    "puzzleMoves": [
+      "h6e3",
+      "g6g5",
+      "e3e4"
+    ],
+    "playerColor": "white",
+    "used": false,
+    "addedDate": "2026-07-31T04:01:00.130Z"
+  },
+  {
+    "id": "polgar_3720",
+    "session": "afternoon",
+    "mateCount": 3,
+    "initialFen": "4rr2/q1p1n1R1/p3kp2/1N1p4/B1ppN1P1/6B1/bp6/3K3Q w - - 0 1",
+    "puzzleMoves": [
+      "b5c7",
+      "a7c7",
+      "e4c5",
+      "c7c5",
+      "h1e1"
+    ],
+    "playerColor": "white",
+    "used": false,
+    "addedDate": "2026-07-31T04:01:00.139Z"
+  },
+  {
+    "id": "polgar_3913",
+    "session": "evening",
+    "mateCount": 3,
+    "initialFen": "8/4R3/1Nnk1p2/2r2P2/3pp1K1/8/8/8 w - - 0 1",
+    "puzzleMoves": [
+      "e7d7",
+      "d6e5",
+      "d7d5",
+      "c5d5",
+      "b6c4"
+    ],
+    "playerColor": "white",
+    "used": true,
+    "addedDate": "2026-07-31T04:01:00.144Z",
+    "lastUsed": "2026-07-31T04:05:38.092Z"
   }
 ]

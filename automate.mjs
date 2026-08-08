@@ -111,12 +111,14 @@ function generateSEOMetadata(theme, puzzleData) {
   const dateFull = targetDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }); // e.g. "July 30, 2026"
 
   const titleOptions = [
+    `Magnus Carlsen Level Mate in ${mateCount}! 🤯 (${dateShort}) #shorts`,
+    `Hikaru Found This in 2 Seconds! ⚡ (${dateShort}) #shorts`,
     `Only ${eloRange} ELO Can Solve This! ♟️ Daily Puzzle (${dateShort}) #shorts`,
     `99% FAIL This Mate in ${mateCount}! 🤯 ${dateShort} Challenge #shorts`,
     `Can You Spot Today's Sacrifice? 🏆 (${dateShort}) #shorts`,
     `Brilliant ${eloRange} ELO Checkmate Trap ⚡ ${dateShort} #shorts`,
-    `Hardest Mate in ${mateCount} Puzzle of the Day 🎯 (${dateShort}) #shorts`,
-    `Can You Solve Today's Checkmate in 5 Seconds? 🧠 (${dateShort}) #shorts`
+    `Can 1200 ELO Spot This Grandmaster Trap? 🧠 (${dateShort}) #shorts`,
+    `Kasparov's Favorite Checkmate Trap 🎯 (${dateShort}) #shorts`
   ];
   
   const title = titleOptions[Math.floor(Math.random() * titleOptions.length)];
@@ -128,16 +130,18 @@ function generateSEOMetadata(theme, puzzleData) {
 
 🏆 Subscribe to @puzzlegambit for Daily Chess Shorts, Checkmate Tactics & Chess Riddles!
 
-#chess #puzzles #chessshorts #checkmate #guessthemove #chesstactics #chessstrategy #dailychess #remotion #magnuscarlsen`;
+#chess #puzzles #chessshorts #checkmate #guessthemove #chesstactics #chessstrategy #dailychess #remotion #magnuscarlsen #hikarunakamura`;
 
   const tags = [
     "chess", "puzzles", "shorts", "remotion", `matein${mateCount}`,
-    "chess tactics", "chess strategy", "grandmaster", "magnus carlsen",
+    "chess tactics", "chess strategy", "grandmaster", "magnus carlsen", "hikaru nakamura",
     "chess puzzles", "chess opening", "chess endgame", "checkmate", "brilliant move",
     "guessthemove", "chess challenge", "chess riddle", "daily puzzle"
   ];
 
   const hooks = [
+    `MAGNUS CARLSEN MATE IN ${mateCount}!`,
+    `HIKARU FOUND THIS IN 2s!`,
     `ONLY ${eloRange} ELO CAN SOLVE THIS!`,
     `99% MISS THIS MATE IN ${mateCount}!`,
     `CAN YOU SPOT THE SACRIFICE?`,

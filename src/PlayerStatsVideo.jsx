@@ -31,7 +31,8 @@ export const PlayerStatsVideo = ({
       blitz: 2869
     },
     photo: null
-  }
+  },
+  formattedDate = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()
 }) => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
@@ -148,7 +149,29 @@ export const PlayerStatsVideo = ({
         }}
       >
         {/* Header Block */}
-        <div style={{ textAlign: "center", width: "100%" }}>
+        <div style={{ textAlign: "center", width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          {/* Date Badge */}
+          <div style={{
+            padding: "16px 45px",
+            background: "rgba(255, 255, 255, 0.12)",
+            borderRadius: 100,
+            backdropFilter: "blur(20px)",
+            border: "2px solid rgba(255, 255, 255, 0.25)",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
+            marginBottom: 25
+          }}>
+            <span style={{
+              color: "#FFD700",
+              fontSize: 50,
+              fontWeight: 900,
+              letterSpacing: 4,
+              textTransform: "uppercase",
+              textShadow: "0 2px 10px rgba(0,0,0,0.5)"
+            }}>
+              📅 {formattedDate}
+            </span>
+          </div>
+
           <h2
             style={{
               color: accentColor,

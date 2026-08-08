@@ -14,22 +14,41 @@ const GOOGLE_AUTH_CONFIG = {
   refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
 };
 
+// --- HELPER TO GET TARGET UPLOAD DATE ---
+function getTargetDate() {
+  const scheduleArg = process.argv.find(arg => arg.startsWith("--schedule="));
+  if (scheduleArg) {
+    const scheduleStr = scheduleArg.split("=")[1];
+    const parsedDate = new Date(scheduleStr);
+    if (!isNaN(parsedDate.getTime())) {
+      return parsedDate;
+    }
+  }
+  return new Date();
+}
+
 // --- VIRAL SEO METADATA GENERATOR ---
 function generateViralSEOMetadata(playerData) {
   const ratingClue = playerData.fideStats.ratings.standard || playerData.fideStats.ratings.rapid || playerData.fideStats.ratings.blitz;
   const genderTerm = playerData.name.includes("Deshmukh") || playerData.name.includes("Sachdev") || playerData.name.includes("Agrawal") || playerData.name.includes("Rout") ? "she" : "he";
   const titleShort = playerData.fideStats.title?.toLowerCase().includes("grandmaster") || playerData.fideStats.title === "GM" ? "GM" : "IM";
 
+  const targetDate = getTargetDate();
+  const dateShort = targetDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }); // e.g. "Jul 30"
+  const dateFull = targetDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }); // e.g. "July 30, 2026"
+
   // Dynamic high-retention titles for the YouTube algorithm
   const titleOptions = [
-    `Can you GUESS this Chess Legend? 🤯🏆 #shorts`,
-    `99% of Chess Fans FAIL to Guess this ${titleShort}! ♟️😱 #shorts`,
-    `Who is this active FIDE ${ratingClue} Rated Chess Star? 🌟🤯 #shorts`,
-    `Guess the famous Chess ${titleShort}! 👇✍️ #shorts`
+    `Can you GUESS this Chess Legend? 🤯🏆 (${dateShort}) #shorts`,
+    `99% of Chess Fans FAIL to Guess this ${titleShort}! ♟️😱 (${dateShort}) #shorts`,
+    `Who is this active FIDE ${ratingClue} Rated Chess Star? 🌟 (${dateShort}) #shorts`,
+    `Guess the famous Chess ${titleShort}! 👇✍️ (${dateShort}) #shorts`
   ];
   const title = titleOptions[Math.floor(Math.random() * titleOptions.length)];
 
-  const description = `Clues:
+  const description = `📅 Daily Guess the GM Challenge — ${dateFull}
+
+Clues:
 📍 Federation: ${playerData.fideStats.country} (Born: ${playerData.fideStats.bYear})
 📈 Active FIDE Rating: ${ratingClue}
 👑 Title: ${playerData.fideStats.title}
@@ -46,12 +65,12 @@ Write your guess in the comments! Can you spot who ${genderTerm} is? 👇✍️
     "chess tactics", "chess strategy", "viral shorts", "magnus carlsen"
   ];
 
-  return { title, description, tags, category: "24" };
+  return { title, description, tags, category: "24", formattedDate: dateShort.toUpperCase() };
 }
 
 // --- RENDERING LOGIC ---
-async function renderPlayerVideo(playerData) {
-  console.log(`🚀 Bundling and rendering vertical short for: ${playerData.name}...`);
+async function renderPlayerVideo(playerData, formattedDate) {
+  console.log(`🚀 Bundling and rendering vertical short for: ${playerData.name} (${formattedDate})...`);
   
   if (process.env.FFMPEG_PATH && process.env.FFMPEG_PATH !== 'ffmpeg') {
     process.env.FFMPEG_PATH = path.resolve(process.env.FFMPEG_PATH);
@@ -67,7 +86,8 @@ async function renderPlayerVideo(playerData) {
     flag: playerData.flag,
     achievements: playerData.achievements,
     playstyle: playerData.playstyle,
-    fideStats: playerData.fideStats
+    fideStats: playerData.fideStats,
+    formattedDate: formattedDate
   };
 
   const composition = await selectComposition({
@@ -193,14 +213,25 @@ const runDailyAutomation = async () => {
 
   console.log(`🎲 Selected Daily Player: ${selectedPlayer.name} (FIDE ID: ${selectedPlayer.fideId})`);
 
+  const isDryRun = process.argv.includes("--dry-run");
+  if (isDryRun) console.log("🧪 DRY RUN MODE ENABLED. No rendering or uploading.");
+
   // 2. Fetch monthly stats from FIDE & get Base64 photo
   const playerData = await getPlayerStats(selectedPlayer.username);
 
-  // 3. Compile/Render the vertical 4K Short
-  const videoPath = await renderPlayerVideo(playerData);
-
-  // 4. Generate SEO Metadata
+  // 3. Generate SEO Metadata with Upload Date
   const metadata = generateViralSEOMetadata(playerData);
+  console.log(`✨ SEO Title: ${metadata.title}`);
+  console.log(`📅 Formatted Date Badge: ${metadata.formattedDate}`);
+
+  if (isDryRun) {
+    console.log("⏭️ Skipping render and upload in dry run.");
+    console.log("🏁 Dry run complete.");
+    return;
+  }
+
+  // 4. Compile/Render the vertical 4K Short
+  const videoPath = await renderPlayerVideo(playerData, metadata.formattedDate);
 
   // 5. Upload to @puzzlegambit YouTube channel & post pinned answer comment
   await uploadToYouTube(videoPath, metadata, playerData.name);

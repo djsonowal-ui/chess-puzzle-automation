@@ -1672,8 +1672,9 @@
       "e5b2"
     ],
     "playerColor": "black",
-    "used": false,
-    "addedDate": "2026-05-24T04:48:33.754Z"
+    "used": true,
+    "addedDate": "2026-05-24T04:48:33.754Z",
+    "lastUsed": "2026-07-30T11:37:47.290Z"
   },
   {
     "id": "polgar_4296",
@@ -1750,8 +1751,9 @@
       "a7c5"
     ],
     "playerColor": "white",
-    "used": false,
-    "addedDate": "2026-05-26T04:45:30.843Z"
+    "used": true,
+    "addedDate": "2026-05-26T04:45:30.843Z",
+    "lastUsed": "2026-08-08T11:07:58.509Z"
   },
   {
     "id": "polgar_4262",
@@ -1891,8 +1893,9 @@
       "g7e6"
     ],
     "playerColor": "white",
-    "used": false,
-    "addedDate": "2026-05-28T04:51:14.265Z"
+    "used": true,
+    "addedDate": "2026-05-28T04:51:14.265Z",
+    "lastUsed": "2026-07-30T11:42:32.134Z"
   },
   {
     "id": "polgar_3838",
@@ -2050,8 +2053,9 @@
       "c8b8"
     ],
     "playerColor": "black",
-    "used": false,
-    "addedDate": "2026-05-30T04:35:19.432Z"
+    "used": true,
+    "addedDate": "2026-05-30T04:35:19.432Z",
+    "lastUsed": "2026-07-30T12:02:16.611Z"
   },
   {
     "id": "polgar_4451",
@@ -2178,8 +2182,9 @@
       "e2e4"
     ],
     "playerColor": "white",
-    "used": false,
-    "addedDate": "2026-05-30T10:20:01.292Z"
+    "used": true,
+    "addedDate": "2026-05-30T10:20:01.292Z",
+    "lastUsed": "2026-07-30T11:52:14.364Z"
   },
   {
     "id": "polgar_3794",
@@ -2225,8 +2230,9 @@
       "d5h5"
     ],
     "playerColor": "white",
-    "used": false,
-    "addedDate": "2026-05-31T05:04:52.959Z"
+    "used": true,
+    "addedDate": "2026-05-31T05:04:52.959Z",
+    "lastUsed": "2026-07-30T11:53:35.620Z"
   },
   {
     "id": "polgar_4379",
@@ -2256,8 +2262,9 @@
       "c5b5"
     ],
     "playerColor": "white",
-    "used": false,
-    "addedDate": "2026-05-31T17:50:34.571Z"
+    "used": true,
+    "addedDate": "2026-05-31T17:50:34.571Z",
+    "lastUsed": "2026-08-08T11:10:52.504Z"
   },
   {
     "id": "polgar_4409",
@@ -2304,8 +2311,9 @@
       "f6g5"
     ],
     "playerColor": "white",
-    "used": false,
-    "addedDate": "2026-06-01T05:26:41.765Z"
+    "used": true,
+    "addedDate": "2026-06-01T05:26:41.765Z",
+    "lastUsed": "2026-08-08T11:13:05.049Z"
   },
   {
     "id": "polgar_3967",

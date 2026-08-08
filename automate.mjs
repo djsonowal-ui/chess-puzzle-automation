@@ -87,39 +87,71 @@ const GOOGLE_AUTH_CONFIG = {
   refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
 };
 
+// --- HELPER TO GET TARGET UPLOAD DATE ---
+function getTargetDate() {
+  const scheduleArg = process.argv.find(arg => arg.startsWith("--schedule="));
+  if (scheduleArg) {
+    const scheduleStr = scheduleArg.split("=")[1];
+    const parsedDate = new Date(scheduleStr);
+    if (!isNaN(parsedDate.getTime())) {
+      return parsedDate;
+    }
+  }
+  return new Date();
+}
+
 // --- SEO EXPERT METADATA GENERATOR ---
 function generateSEOMetadata(theme, puzzleData) {
-  const hooks = [
-    "INSANE", "BRILLIANT", "SHOCKING", "IMPOSSIBLE", "TRAPPED", 
-    "UNBELIEVABLE", "SNEAKY", "HIDDEN", "SMART", "WICKED", "CRUSHING"
+  const mateCount = puzzleData.mateCount || 2;
+  const eloRange = mateCount === 2 ? "1200+" : "1500+";
+  const eloRating = mateCount === 2 ? "1200 - 1400" : "1500 - 1800";
+
+  const targetDate = getTargetDate();
+  const dateShort = targetDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }); // e.g. "Jul 30"
+  const dateFull = targetDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }); // e.g. "July 30, 2026"
+
+  const titleOptions = [
+    `Only ${eloRange} ELO Can Solve This! ♟️ Daily Puzzle (${dateShort}) #shorts`,
+    `99% FAIL This Mate in ${mateCount}! 🤯 ${dateShort} Challenge #shorts`,
+    `Can You Spot Today's Sacrifice? 🏆 (${dateShort}) #shorts`,
+    `Brilliant ${eloRange} ELO Checkmate Trap ⚡ ${dateShort} #shorts`,
+    `Hardest Mate in ${mateCount} Puzzle of the Day 🎯 (${dateShort}) #shorts`,
+    `Can You Solve Today's Checkmate in 5 Seconds? 🧠 (${dateShort}) #shorts`
   ];
-  const catchphrases = [
-    "Can you spot it?", "Did you see this coming?", "The engine found this!", 
-    "Harder than it looks!", "Wait for the end!", "Pure brilliance!", 
-    "A tactical masterclass."
-  ];
-  const emojis = ["♟️", "🤯", "🔥", "🏆", "🎯", "😱", "✅", "✨"];
   
-  const hook = hooks[Math.floor(Math.random() * hooks.length)];
-  const catchphrase = catchphrases[Math.floor(Math.random() * catchphrases.length)];
-  const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  const title = titleOptions[Math.floor(Math.random() * titleOptions.length)];
   
-  const title = `${hook} Mate in ${puzzleData.mateCount}! ${emoji} ${catchphrase} #shorts`;
-  
-  const description = `Can you solve this ${puzzleData.mateCount}-move sequence? ♟️\n\nThis ${theme.title} puzzle is designed to test your tactical vision. ${catchphrase}\n\n🏆 Subscribe for Daily Chess Puzzles, Tactics & Brilliances!\n\n#chess #puzzles #chessshorts #checkmate #remotion #lichess #tactics #chesstactics #chessstrategy #puzzle`;
-  
+  const description = `📅 Daily Chess Challenge — ${dateFull}
+🎯 Difficulty: ~${eloRating} (${eloRange} ELO)
+
+⏱️ Can you solve today's puzzle before time runs out? Pause the video and write your move in the comments! 👇
+
+🏆 Subscribe to @puzzlegambit for Daily Chess Shorts, Checkmate Tactics & Chess Riddles!
+
+#chess #puzzles #chessshorts #checkmate #guessthemove #chesstactics #chessstrategy #dailychess #remotion #magnuscarlsen`;
+
   const tags = [
-    "chess", "puzzles", "shorts", "remotion", `matein${puzzleData.mateCount}`,
+    "chess", "puzzles", "shorts", "remotion", `matein${mateCount}`,
     "chess tactics", "chess strategy", "grandmaster", "magnus carlsen",
-    "chess puzzles", "chess opening", "chess endgame", "checkmate", "brilliant move"
+    "chess puzzles", "chess opening", "chess endgame", "checkmate", "brilliant move",
+    "guessthemove", "chess challenge", "chess riddle", "daily puzzle"
   ];
-  const hookText = `${hook} MATE IN ${puzzleData.mateCount}!`;
-  return { title, description, tags, category: "24", hookText };
+
+  const hooks = [
+    `ONLY ${eloRange} ELO CAN SOLVE THIS!`,
+    `99% MISS THIS MATE IN ${mateCount}!`,
+    `CAN YOU SPOT THE SACRIFICE?`,
+    `INSANE MATE IN ${mateCount} TRAP!`,
+    `CAN YOU SOLVE IN 5 SECONDS?`
+  ];
+
+  const hookText = hooks[Math.floor(Math.random() * hooks.length)];
+  return { title, description, tags, category: "24", hookText, eloRating, formattedDate: dateShort.toUpperCase() };
 }
 
 // --- RENDERING LOGIC ---
-async function renderPuzzle(puzzleData, hookText) {
-  console.log(`🚀 Rendering ${theme.title} (Mate in ${requiredMateCount})...`);
+async function renderPuzzle(puzzleData, metadata) {
+  console.log(`🚀 Rendering ${theme.title} (${metadata.formattedDate}, Mate in ${requiredMateCount}, ~${metadata.eloRating} ELO)...`);
   
   if (process.env.FFMPEG_PATH && process.env.FFMPEG_PATH !== 'ffmpeg') {
     process.env.FFMPEG_PATH = path.resolve(process.env.FFMPEG_PATH);
@@ -136,7 +168,9 @@ async function renderPuzzle(puzzleData, hookText) {
     mateCount: requiredMateCount,
     colors: theme.colors,
     bg: theme.bg,
-    hookText,
+    hookText: metadata.hookText,
+    eloRating: metadata.eloRating,
+    formattedDate: metadata.formattedDate,
   };
 
   const composition = await selectComposition({
@@ -163,6 +197,31 @@ async function renderPuzzle(puzzleData, hookText) {
 
   console.log(`\n✅ Render complete: ${outputLocation}`);
   return path.resolve(outputLocation);
+}
+
+// --- COMMENT POSTER ENGINE ---
+async function postInteractiveComment(youtube, videoId, metadata) {
+  try {
+    console.log(`💬 Posting interactive comment on video ${videoId}...`);
+    const commentText = `What is your current ELO rating? ♟️ Did you spot the checkmate before the timer ran out? Comment your time below! 👇`;
+    
+    await youtube.commentThreads.insert({
+      part: "snippet",
+      requestBody: {
+        snippet: {
+          videoId: videoId,
+          topLevelComment: {
+            snippet: {
+              textOriginal: commentText
+            }
+          }
+        }
+      }
+    });
+    console.log(`✅ Posted interactive comment: "${commentText}"`);
+  } catch (err) {
+    console.warn(`⚠️ Could not post comment: ${err.message}`);
+  }
 }
 
 // --- UPLOAD LOGIC ---
@@ -226,6 +285,10 @@ async function uploadToYouTube(filePath, metadata) {
   } else {
     console.log(`\n✅ Upload successful! Published as PUBLIC. ID: ${response.data.id}`);
   }
+
+  // Automatically post interactive comment to drive comment velocity
+  await postInteractiveComment(youtube, response.data.id, metadata);
+
   return response.data;
 }
 
@@ -311,7 +374,7 @@ async function main() {
       return;
     }
 
-    const videoPath = await renderPuzzle(puzzleData, metadata.hookText);
+    const videoPath = await renderPuzzle(puzzleData, metadata);
     await uploadToYouTube(videoPath, metadata);
 
     console.log(`🏁 ${theme.title} Automation complete!`);

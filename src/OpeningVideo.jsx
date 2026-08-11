@@ -22,7 +22,8 @@ export const OpeningVideo = ({
   // Phase Definitions (at 30fps)
   const startDelay = 45; // 1.5s initial pause before moves start
   const moveInterval = 45; // 1.5s per move
-  const totalMoves = puzzleMoves.length;
+  const totalHalfMoves = puzzleMoves.length;
+  const totalFullMoves = Math.ceil(totalHalfMoves / 2); // 1 pair of moves = 1 move
 
   const { currentFen, solutionIndex, isCheck, lastMove } = useMemo(() => {
     const game = new Chess(initialFen);
@@ -91,6 +92,7 @@ export const OpeningVideo = ({
   }, [solutionIndex, puzzleMoves]);
 
   const currentMoveText = solutionIndex >= 0 && solutionIndex < sanList.length ? sanList[solutionIndex] : "";
+  const currentFullMoveNum = Math.floor(Math.max(0, solutionIndex) / 2) + 1;
 
   return (
     <AbsoluteFill
@@ -100,12 +102,12 @@ export const OpeningVideo = ({
         overflow: "hidden",
       }}
     >
-      {/* Background Audio */}
-      <Audio key="bg-music" src={staticFile("lofi-music.mp3")} volume={0.25} loop />
+      {/* Background Audio - Decreased volume by 50% (0.25 -> 0.12) */}
+      <Audio key="bg-music" src={staticFile("lofi-music.mp3")} volume={0.12} loop />
 
-      {/* Move Sound Trigger */}
-      {frame >= startDelay && (frame - startDelay) % moveInterval === 0 && solutionIndex < totalMoves && (
-        <Audio src={staticFile(isCheck ? "check.mp3" : "move.mp3")} volume={0.6} />
+      {/* Move Sound Trigger - Decreased volume by 50% (0.6 -> 0.3) */}
+      {frame >= startDelay && (frame - startDelay) % moveInterval === 0 && solutionIndex < totalHalfMoves && (
+        <Audio src={staticFile(isCheck ? "check.mp3" : "move.mp3")} volume={0.3} />
       )}
 
       {/* Background Image */}
@@ -131,11 +133,11 @@ export const OpeningVideo = ({
         }}
       />
 
-      {/* HEADER SECTION - CUSTOM BRANDING */}
+      {/* HEADER SECTION - MOVED DOWN CLOSER TO BOARD & LARGER FONTS */}
       <div
         style={{
           position: "absolute",
-          top: 180,
+          top: 340, // Moved down closer to the board (was 180)
           width: "100%",
           display: "flex",
           flexDirection: "column",
@@ -147,28 +149,28 @@ export const OpeningVideo = ({
       >
         <div
           style={{
-            background: "rgba(10, 16, 28, 0.85)",
-            backdropFilter: "blur(20px)",
-            padding: "36px 60px",
-            borderRadius: 36,
-            border: "2px solid rgba(255, 215, 0, 0.4)",
-            boxShadow: "0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.15)",
+            background: "rgba(10, 16, 28, 0.88)",
+            backdropFilter: "blur(24px)",
+            padding: "42px 70px",
+            borderRadius: 40,
+            border: "3px solid rgba(255, 215, 0, 0.5)",
+            boxShadow: "0 25px 70px rgba(0, 0, 0, 0.85), 0 0 50px rgba(255, 215, 0, 0.2)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 12,
-            width: "90%"
+            gap: 14,
+            width: "92%"
           }}
         >
           <h1
             style={{
               color: "#FFFFFF",
-              fontSize: 68,
+              fontSize: 84, // Increased font size (was 68)
               fontWeight: 900,
               margin: 0,
               letterSpacing: 4,
               textTransform: "uppercase",
-              textShadow: "0 4px 20px rgba(255, 215, 0, 0.3)",
+              textShadow: "0 4px 25px rgba(255, 215, 0, 0.4)",
               lineHeight: 1.1
             }}
           >
@@ -177,8 +179,8 @@ export const OpeningVideo = ({
 
           <div
             style={{
-              height: 3,
-              width: 140,
+              height: 4,
+              width: 180,
               background: "linear-gradient(90deg, transparent, #FFD700, transparent)",
               borderRadius: 2
             }}
@@ -187,10 +189,10 @@ export const OpeningVideo = ({
           <p
             style={{
               color: "#FFD700",
-              fontSize: 48,
-              fontWeight: 700,
+              fontSize: 58, // Increased font size (was 48)
+              fontWeight: 800,
               margin: 0,
-              letterSpacing: 6,
+              letterSpacing: 7,
               textTransform: "uppercase"
             }}
           >
@@ -237,11 +239,11 @@ export const OpeningVideo = ({
         </div>
       </div>
 
-      {/* BOTTOM OPENING NAME & MOVE TICKER */}
+      {/* FOOTER SECTION - MOVED UP CLOSER TO BOARD & LARGER FONTS */}
       <div
         style={{
           position: "absolute",
-          bottom: 220,
+          bottom: 380, // Moved up closer to board (was 220)
           width: "100%",
           display: "flex",
           flexDirection: "column",
@@ -254,20 +256,20 @@ export const OpeningVideo = ({
         {/* Opening Name Badge */}
         <div
           style={{
-            background: "linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(0, 0, 0, 0.7))",
-            border: "2px solid #FFD700",
-            padding: "20px 60px",
-            borderRadius: 50,
-            boxShadow: "0 10px 40px rgba(0, 0, 0, 0.6)",
+            background: "linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(10, 16, 28, 0.9))",
+            border: "3px solid #FFD700",
+            padding: "24px 70px",
+            borderRadius: 60,
+            boxShadow: "0 15px 50px rgba(0, 0, 0, 0.8)",
             textAlign: "center"
           }}
         >
           <span
             style={{
               color: "#FFFFFF",
-              fontSize: 54,
-              fontWeight: 800,
-              letterSpacing: 2,
+              fontSize: 66, // Increased font size (was 54)
+              fontWeight: 900,
+              letterSpacing: 3,
               textTransform: "uppercase"
             }}
           >
@@ -275,23 +277,23 @@ export const OpeningVideo = ({
           </span>
         </div>
 
-        {/* Current Move Played Banner */}
+        {/* Current Move Played Banner (1 pair of move = 1 move) */}
         {currentMoveText && (
           <div
             style={{
-              background: "rgba(15, 23, 42, 0.9)",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-              padding: "16px 44px",
-              borderRadius: 30,
+              background: "rgba(15, 23, 42, 0.95)",
+              border: "2px solid rgba(255, 255, 255, 0.25)",
+              padding: "20px 50px",
+              borderRadius: 36,
               display: "flex",
               alignItems: "center",
-              gap: 16
+              gap: 20
             }}
           >
-            <span style={{ color: "#94A3B8", fontSize: 40, fontWeight: 600 }}>
-              Move {solutionIndex + 1} of {totalMoves}:
+            <span style={{ color: "#94A3B8", fontSize: 48, fontWeight: 700 }}>
+              Move {currentFullMoveNum} of {totalFullMoves}:
             </span>
-            <span style={{ color: "#38BDF8", fontSize: 44, fontWeight: 800, letterSpacing: 1 }}>
+            <span style={{ color: "#38BDF8", fontSize: 54, fontWeight: 900, letterSpacing: 2 }}>
               {currentMoveText}
             </span>
           </div>

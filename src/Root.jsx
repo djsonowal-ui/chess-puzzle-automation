@@ -1,6 +1,7 @@
 import { Composition } from "remotion";
 import { PuzzleVideo } from "./PuzzleVideo";
 import { PlayerStatsVideo } from "./PlayerStatsVideo";
+import { OpeningVideo } from "./OpeningVideo";
 
 export const RemotionRoot = () => {
   // Logic to calculate duration based on moves
@@ -8,6 +9,12 @@ export const RemotionRoot = () => {
   const calculateDuration = (moves) => {
     const solutionMovesCount = Math.max(0, (moves?.length || 0));
     const totalDurationInSeconds = 2 + 4 + solutionMovesCount * 1.5 + 2; 
+    return Math.ceil(totalDurationInSeconds * 30);
+  };
+
+  const calculateOpeningDuration = (moves) => {
+    const movesCount = Math.max(0, (moves?.length || 0));
+    const totalDurationInSeconds = 1.5 + movesCount * 1.5 + 3.0; // 1.5s intro + 1.5s/move + 3s buffer
     return Math.ceil(totalDurationInSeconds * 30);
   };
 
@@ -69,6 +76,31 @@ export const RemotionRoot = () => {
           }
         }}
       />
+
+      <Composition
+        id="ChessOpeningShort"
+        component={OpeningVideo}
+        fps={30}
+        width={2160}
+        height={3840}
+        calculateMetadata={({ props }) => {
+          const duration = calculateOpeningDuration(props.puzzleMoves);
+          return {
+            durationInFrames: duration,
+          };
+        }}
+        defaultProps={{
+          openingName: "Italian Game",
+          initialFen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          puzzleMoves: ["e2e4", "e7e5", "g1f3", "b8c6", "f1c4"],
+          sanList: ["1. e4", "1... e5", "2. Nf3", "2... Nc6", "3. Bc4"],
+          colors: { dark: "#769656", light: "#eeeed2" },
+          bg: "morning_bg.png",
+          clubTitle: "CHOWKIDINGHEE CHESS CLUB",
+          authorName: "by RAJNISH VERMA"
+        }}
+      />
     </>
   );
 };
+

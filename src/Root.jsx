@@ -78,6 +78,30 @@ export const RemotionRoot = () => {
       />
 
       <Composition
+        id="OpeningSeries"
+        component={OpeningVideo}
+        fps={30}
+        width={2160}
+        height={3840}
+        calculateMetadata={({ props }) => {
+          const duration = calculateOpeningDuration(props.puzzleMoves);
+          return {
+            durationInFrames: duration,
+          };
+        }}
+        defaultProps={{
+          openingName: "Italian Game",
+          initialFen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          puzzleMoves: ["e2e4", "e7e5", "g1f3", "b8c6", "f1c4"],
+          sanList: ["1. e4", "1... e5", "2. Nf3", "2... Nc6", "3. Bc4"],
+          colors: { dark: "#769656", light: "#eeeed2" },
+          bg: "morning_bg.png",
+          clubTitle: "CHOWKIDINGHEE CHESS CLUB",
+          authorName: "by RAJNISH VERMA"
+        }}
+      />
+
+      <Composition
         id="ChessOpeningShort"
         component={OpeningVideo}
         fps={30}

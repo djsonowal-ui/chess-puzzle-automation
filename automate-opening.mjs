@@ -185,8 +185,13 @@ async function main() {
     const videoPath = path.resolve(outputLocation);
     console.log(`\n✅ Render complete: ${videoPath}`);
 
-    // Upload to YouTube
-    await uploadToYouTube(videoPath, metadata);
+    const shouldUpload = args.includes("--upload");
+    if (shouldUpload) {
+      // Upload to YouTube
+      await uploadToYouTube(videoPath, metadata);
+    } else {
+      console.log("ℹ️ Local video saved. Skipping upload (pass --upload when ready to publish).");
+    }
 
   } catch (err) {
     console.error("\n❌ Opening Automation Failed:");

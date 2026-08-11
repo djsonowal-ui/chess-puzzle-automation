@@ -271,17 +271,17 @@ async function uploadToYouTube(filePath, metadata) {
     },
     media: { body: fs.createReadStream(filePath) },
   }).catch(err => {
-    if (err.errors) {
-      const details = err.errors[0];
-      if (details.reason === "quotaExceeded") {
-        throw new Error("🚀 YOUTUBE QUOTA EXCEEDED: You have hit the daily upload limit for this Google Cloud project.");
-      }
-      if (details.reason === "invalid_grant" || details.reason === "unauthorized") {
-        throw new Error("🔐 YOUTUBE AUTH FAILED: Refresh token is expired or invalid. Please run 'node get_token.mjs' and update your secrets.");
-      }
-      throw new Error(`📡 YOUTUBE API ERROR (${details.reason}): ${details.message}`);
+    const errMsg = err.message || "";
+    const errDetails = err.errors?.[0] || {};
+    const reason = errDetails.reason || "";
+
+    if (reason === "quotaExceeded" || errMsg.includes("quotaExceeded")) {
+      throw new Error("🚀 YOUTUBE QUOTA EXCEEDED: Daily upload limit reached for Google Cloud project.");
     }
-    throw err;
+    if (reason === "invalid_grant" || reason === "unauthorized" || errMsg.includes("invalid_grant") || errMsg.includes("unauthorized")) {
+      throw new Error("🔐 YOUTUBE AUTH FAILED: OAuth refresh token is expired or invalid. Please run 'node get_token.mjs' and update GitHub Secrets.");
+    }
+    throw new Error(`📡 YOUTUBE API ERROR (${reason || "unknown"}): ${errMsg || JSON.stringify(errDetails)}`);
   });
 
   if (publishAt) {

@@ -133,45 +133,45 @@ export const OpeningVideo = ({
         }}
       />
 
-      {/* HEADER SECTION - MOVED DOWN CLOSER TO BOARD & LARGER FONTS */}
+      {/* HEADER SECTION - MOVED MUCH CLOSER TO BOARD & EVEN LARGER FONTS */}
       <div
         style={{
           position: "absolute",
-          top: 340, // Moved down closer to the board (was 180)
+          top: 540, // Brought much closer to board top edge (was 340)
           width: "100%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           zIndex: 50,
-          padding: "0 40px",
+          padding: "0 30px",
           textAlign: "center"
         }}
       >
         <div
           style={{
-            background: "rgba(10, 16, 28, 0.88)",
-            backdropFilter: "blur(24px)",
-            padding: "42px 70px",
-            borderRadius: 40,
-            border: "3px solid rgba(255, 215, 0, 0.5)",
-            boxShadow: "0 25px 70px rgba(0, 0, 0, 0.85), 0 0 50px rgba(255, 215, 0, 0.2)",
+            background: "rgba(10, 16, 28, 0.90)",
+            backdropFilter: "blur(28px)",
+            padding: "48px 80px",
+            borderRadius: 44,
+            border: "4px solid rgba(255, 215, 0, 0.6)",
+            boxShadow: "0 30px 80px rgba(0, 0, 0, 0.9), 0 0 60px rgba(255, 215, 0, 0.25)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 14,
-            width: "92%"
+            gap: 16,
+            width: "94%"
           }}
         >
           <h1
             style={{
               color: "#FFFFFF",
-              fontSize: 84, // Increased font size (was 68)
+              fontSize: 104, // Significantly increased font size (was 84)
               fontWeight: 900,
               margin: 0,
               letterSpacing: 4,
               textTransform: "uppercase",
-              textShadow: "0 4px 25px rgba(255, 215, 0, 0.4)",
-              lineHeight: 1.1
+              textShadow: "0 4px 30px rgba(255, 215, 0, 0.45)",
+              lineHeight: 1.05
             }}
           >
             {clubTitle}
@@ -179,20 +179,20 @@ export const OpeningVideo = ({
 
           <div
             style={{
-              height: 4,
-              width: 180,
+              height: 5,
+              width: 220,
               background: "linear-gradient(90deg, transparent, #FFD700, transparent)",
-              borderRadius: 2
+              borderRadius: 3
             }}
           />
 
           <p
             style={{
               color: "#FFD700",
-              fontSize: 58, // Increased font size (was 48)
-              fontWeight: 800,
+              fontSize: 72, // Significantly increased font size (was 58)
+              fontWeight: 900,
               margin: 0,
-              letterSpacing: 7,
+              letterSpacing: 8,
               textTransform: "uppercase"
             }}
           >
@@ -239,37 +239,37 @@ export const OpeningVideo = ({
         </div>
       </div>
 
-      {/* FOOTER SECTION - MOVED UP CLOSER TO BOARD & LARGER FONTS */}
+      {/* FOOTER SECTION - MOVED MUCH CLOSER TO BOARD & EVEN LARGER FONTS */}
       <div
         style={{
           position: "absolute",
-          bottom: 380, // Moved up closer to board (was 220)
+          bottom: 560, // Brought much closer to board bottom edge (was 380)
           width: "100%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           zIndex: 50,
-          padding: "0 50px",
+          padding: "0 40px",
           gap: 24
         }}
       >
         {/* Opening Name Badge */}
         <div
           style={{
-            background: "linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(10, 16, 28, 0.9))",
-            border: "3px solid #FFD700",
-            padding: "24px 70px",
-            borderRadius: 60,
-            boxShadow: "0 15px 50px rgba(0, 0, 0, 0.8)",
+            background: "linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(10, 16, 28, 0.95))",
+            border: "4px solid #FFD700",
+            padding: "26px 85px",
+            borderRadius: 70,
+            boxShadow: "0 20px 60px rgba(0, 0, 0, 0.85)",
             textAlign: "center"
           }}
         >
           <span
             style={{
               color: "#FFFFFF",
-              fontSize: 66, // Increased font size (was 54)
+              fontSize: 82, // Significantly increased font size (was 66)
               fontWeight: 900,
-              letterSpacing: 3,
+              letterSpacing: 4,
               textTransform: "uppercase"
             }}
           >
@@ -281,19 +281,19 @@ export const OpeningVideo = ({
         {currentMoveText && (
           <div
             style={{
-              background: "rgba(15, 23, 42, 0.95)",
-              border: "2px solid rgba(255, 255, 255, 0.25)",
-              padding: "20px 50px",
-              borderRadius: 36,
+              background: "rgba(15, 23, 42, 0.96)",
+              border: "3px solid rgba(255, 255, 255, 0.3)",
+              padding: "24px 60px",
+              borderRadius: 40,
               display: "flex",
               alignItems: "center",
-              gap: 20
+              gap: 24
             }}
           >
-            <span style={{ color: "#94A3B8", fontSize: 48, fontWeight: 700 }}>
+            <span style={{ color: "#94A3B8", fontSize: 58, fontWeight: 700 }}>
               Move {currentFullMoveNum} of {totalFullMoves}:
             </span>
-            <span style={{ color: "#38BDF8", fontSize: 54, fontWeight: 900, letterSpacing: 2 }}>
+            <span style={{ color: "#38BDF8", fontSize: 68, fontWeight: 900, letterSpacing: 2 }}>
               {currentMoveText}
             </span>
           </div>

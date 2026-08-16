@@ -15,16 +15,28 @@ const GOOGLE_AUTH_CONFIG = {
 };
 
 // --- HELPER TO GET TARGET UPLOAD DATE ---
-function getTargetDate() {
+function parseScheduleTime() {
   const scheduleArg = process.argv.find(arg => arg.startsWith("--schedule="));
-  if (scheduleArg) {
-    const scheduleStr = scheduleArg.split("=")[1];
-    const parsedDate = new Date(scheduleStr);
-    if (!isNaN(parsedDate.getTime())) {
-      return parsedDate;
+  if (!scheduleArg) return null;
+
+  const scheduleStr = scheduleArg.split("=")[1];
+  let parsedDate = new Date(scheduleStr);
+  if (isNaN(parsedDate.getTime())) return null;
+
+  const now = new Date();
+  if (parsedDate < now) {
+    console.warn(`⚠️ Scheduled time ${scheduleStr} is in the past (${parsedDate.toISOString()}). Rolling forward by +24 hours.`);
+    while (parsedDate < now) {
+      parsedDate.setDate(parsedDate.getDate() + 1);
     }
+    console.log(`📅 Adjusted scheduled publish time to tomorrow: ${parsedDate.toISOString()}`);
   }
-  return new Date();
+  return parsedDate.toISOString();
+}
+
+function getTargetDate() {
+  const publishAt = parseScheduleTime();
+  return publishAt ? new Date(publishAt) : new Date();
 }
 
 // --- VIRAL SEO METADATA GENERATOR ---
@@ -152,6 +164,8 @@ async function uploadToYouTube(filePath, metadata, playerName) {
     throw new Error("Target video file is missing or empty.");
   }
 
+  const publishAt = parseScheduleTime();
+
   console.log("☁️ Uploading daily video to @puzzlegambit YouTube channel...");
   const oauth2Client = new google.auth.OAuth2(GOOGLE_AUTH_CONFIG.clientId, GOOGLE_AUTH_CONFIG.clientSecret);
   oauth2Client.setCredentials({ refresh_token: GOOGLE_AUTH_CONFIG.refreshToken });
@@ -167,7 +181,8 @@ async function uploadToYouTube(filePath, metadata, playerName) {
         categoryId: metadata.category,
       },
       status: {
-        privacyStatus: "public",
+        privacyStatus: publishAt ? "private" : "public",
+        publishAt: publishAt || undefined,
         selfDeclaredMadeForKids: false
       },
     },
@@ -186,10 +201,14 @@ async function uploadToYouTube(filePath, metadata, playerName) {
     throw new Error(`📡 YOUTUBE API ERROR (${reason || "unknown"}): ${errMsg || JSON.stringify(errDetails)}`);
   });
 
-  console.log(`\n🎉 Upload successful! Published video ID: ${response.data.id}`);
-
-  // Automatically post the answer comment
-  await postAnswerComment(youtube, response.data.id, playerName);
+  if (publishAt) {
+    console.log(`\n🎉 Upload successful! Scheduled for: ${publishAt}. Video ID: ${response.data.id}`);
+    console.log(`ℹ️ Skipping answer comment posting for scheduled video (private status). Comments can be posted once public.`);
+  } else {
+    console.log(`\n🎉 Upload successful! Published video ID: ${response.data.id}`);
+    // Automatically post the answer comment
+    await postAnswerComment(youtube, response.data.id, playerName);
+  }
 
   return response.data;
 }

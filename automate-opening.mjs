@@ -36,6 +36,25 @@ Learn classic chess openings, tactics, and strategies with Chowkidinghee Chess C
   return { title, description, tags, category: "24" };
 }
 
+function parseScheduleTime() {
+  const scheduleArg = process.argv.find(arg => arg.startsWith("--schedule="));
+  if (!scheduleArg) return null;
+
+  const scheduleStr = scheduleArg.split("=")[1];
+  let parsedDate = new Date(scheduleStr);
+  if (isNaN(parsedDate.getTime())) return null;
+
+  const now = new Date();
+  if (parsedDate < now) {
+    console.warn(`⚠️ Scheduled time ${scheduleStr} is in the past (${parsedDate.toISOString()}). Rolling forward by +24 hours.`);
+    while (parsedDate < now) {
+      parsedDate.setDate(parsedDate.getDate() + 1);
+    }
+    console.log(`📅 Adjusted scheduled publish time to tomorrow: ${parsedDate.toISOString()}`);
+  }
+  return parsedDate.toISOString();
+}
+
 async function uploadToYouTube(filePath, metadata) {
   if (!GOOGLE_AUTH_CONFIG.clientId || GOOGLE_AUTH_CONFIG.clientId.includes("YOUR_")) {
     console.warn("⚠️ Google credentials missing. Skipping YouTube upload.");
@@ -45,6 +64,8 @@ async function uploadToYouTube(filePath, metadata) {
   if (!fs.existsSync(filePath) || fs.statSync(filePath).size === 0) {
     throw new Error("Target video file is missing or empty.");
   }
+
+  const publishAt = parseScheduleTime();
 
   console.log("☁️ Uploading Chess Opening Short to YouTube...");
   const oauth2Client = new google.auth.OAuth2(GOOGLE_AUTH_CONFIG.clientId, GOOGLE_AUTH_CONFIG.clientSecret);
@@ -61,7 +82,8 @@ async function uploadToYouTube(filePath, metadata) {
         categoryId: metadata.category,
       },
       status: {
-        privacyStatus: "public",
+        privacyStatus: publishAt ? "private" : "public",
+        publishAt: publishAt || undefined,
         selfDeclaredMadeForKids: false
       },
     },
@@ -80,7 +102,11 @@ async function uploadToYouTube(filePath, metadata) {
     throw new Error(`📡 YOUTUBE API ERROR (${reason || "unknown"}): ${errMsg}`);
   });
 
-  console.log(`\n🎉 Upload successful! Published Video ID: ${response.data.id}`);
+  if (publishAt) {
+    console.log(`\n🎉 Upload successful! Scheduled for: ${publishAt}. Video ID: ${response.data.id}`);
+  } else {
+    console.log(`\n🎉 Upload successful! Published Video ID: ${response.data.id}`);
+  }
   return response.data;
 }
 

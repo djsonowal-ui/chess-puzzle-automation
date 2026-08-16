@@ -88,16 +88,28 @@ const GOOGLE_AUTH_CONFIG = {
 };
 
 // --- HELPER TO GET TARGET UPLOAD DATE ---
-function getTargetDate() {
+function parseScheduleTime() {
   const scheduleArg = process.argv.find(arg => arg.startsWith("--schedule="));
-  if (scheduleArg) {
-    const scheduleStr = scheduleArg.split("=")[1];
-    const parsedDate = new Date(scheduleStr);
-    if (!isNaN(parsedDate.getTime())) {
-      return parsedDate;
+  if (!scheduleArg) return null;
+
+  const scheduleStr = scheduleArg.split("=")[1];
+  let parsedDate = new Date(scheduleStr);
+  if (isNaN(parsedDate.getTime())) return null;
+
+  const now = new Date();
+  if (parsedDate < now) {
+    console.warn(`⚠️ Scheduled time ${scheduleStr} is in the past (${parsedDate.toISOString()}). Rolling forward by +24 hours.`);
+    while (parsedDate < now) {
+      parsedDate.setDate(parsedDate.getDate() + 1);
     }
+    console.log(`📅 Adjusted scheduled publish time to tomorrow: ${parsedDate.toISOString()}`);
   }
-  return new Date();
+  return parsedDate.toISOString();
+}
+
+function getTargetDate() {
+  const publishAt = parseScheduleTime();
+  return publishAt ? new Date(publishAt) : new Date();
 }
 
 // --- SEO EXPERT METADATA GENERATOR ---
@@ -240,14 +252,7 @@ async function uploadToYouTube(filePath, metadata) {
     throw new Error("Rendered file is missing or empty.");
   }
 
-  const scheduleArg = process.argv.find(arg => arg.startsWith("--schedule="));
-  let publishAt = scheduleArg ? scheduleArg.split("=")[1] : null;
-
-  if (publishAt && new Date(publishAt) < new Date()) {
-    console.warn(`⚠️ Scheduled time ${publishAt} is in the past. Uploading as PUBLIC immediately instead.`);
-    publishAt = null;
-  }
-
+  const publishAt = parseScheduleTime();
 
   console.log("☁️ Uploading to YouTube...");
   const oauth2Client = new google.auth.OAuth2(GOOGLE_AUTH_CONFIG.clientId, GOOGLE_AUTH_CONFIG.clientSecret);
@@ -286,12 +291,12 @@ async function uploadToYouTube(filePath, metadata) {
 
   if (publishAt) {
     console.log(`\n✅ Upload successful! Scheduled for: ${publishAt}. ID: ${response.data.id}`);
+    console.log(`ℹ️ Skipping comment posting for scheduled video (private status). Comments can be posted once public.`);
   } else {
     console.log(`\n✅ Upload successful! Published as PUBLIC. ID: ${response.data.id}`);
+    // Automatically post interactive comment to drive comment velocity
+    await postInteractiveComment(youtube, response.data.id, metadata);
   }
-
-  // Automatically post interactive comment to drive comment velocity
-  await postInteractiveComment(youtube, response.data.id, metadata);
 
   return response.data;
 }

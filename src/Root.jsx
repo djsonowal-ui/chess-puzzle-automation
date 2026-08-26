@@ -2,6 +2,7 @@ import { Composition } from "remotion";
 import { PuzzleVideo } from "./PuzzleVideo";
 import { PlayerStatsVideo } from "./PlayerStatsVideo";
 import { OpeningVideo } from "./OpeningVideo";
+import { SolvedPuzzleVideo } from "./SolvedPuzzleVideo";
 
 export const RemotionRoot = () => {
   // Logic to calculate duration based on moves
@@ -15,6 +16,21 @@ export const RemotionRoot = () => {
   const calculateOpeningDuration = (moves) => {
     const movesCount = Math.max(0, (moves?.length || 0));
     const totalDurationInSeconds = 1.5 + movesCount * 1.5 + 3.0; // 1.5s intro + 1.5s/move + 3s buffer
+    return Math.ceil(totalDurationInSeconds * 30);
+  };
+
+  const calculateSolvedPuzzleDuration = (props) => {
+    if (props && props.solutions && Array.isArray(props.solutions) && props.solutions.length > 0) {
+      let totalMoves = 0;
+      props.solutions.forEach((s) => {
+        totalMoves += s.puzzleMoves ? s.puzzleMoves.length : 0;
+      });
+      const rewindCount = props.solutions.length - 1;
+      const totalDurationInSeconds = 10.0 + totalMoves * 1.5 + rewindCount * 1.0 + 3.5;
+      return Math.ceil(totalDurationInSeconds * 30);
+    }
+    const movesCount = Math.max(0, (props?.puzzleMoves?.length || 0));
+    const totalDurationInSeconds = 10.0 + movesCount * 1.5 + 3.5;
     return Math.ceil(totalDurationInSeconds * 30);
   };
 
@@ -124,7 +140,62 @@ export const RemotionRoot = () => {
           authorName: "by RAJNISH VERMA"
         }}
       />
+
+      <Composition
+        id="SolvedPuzzles"
+        component={SolvedPuzzleVideo}
+        fps={30}
+        width={2160}
+        height={3840}
+        calculateMetadata={({ props }) => {
+          const duration = calculateSolvedPuzzleDuration(props);
+          return {
+            durationInFrames: duration,
+          };
+        }}
+        defaultProps={{
+          puzzleTitle: "Solved Puzzles",
+          initialFen: "2n1r2k/ppp3pp/2n3q1/3Q2N1/3P1p2/2P4P/PP3PP1/R4NK1 w - - 0 1",
+          puzzleMoves: ["g5f7", "h8g8", "f7e5", "g8h8", "e5g6", "h7g6"],
+          sanList: ["1. Nf7+", "1... Kg8", "2. Ne5+", "2... Kh8", "3. Nxg6+", "3... hxg6"],
+          evaluation: "+-",
+          sideToPlay: "White to Play",
+          playerColor: "white",
+          colors: { dark: "#769656", light: "#eeeed2" },
+          bg: "morning_bg.png",
+          clubTitle: "CHOWKIDINGHEE CHESS CLUB",
+          authorName: "by RAJNISH VERMA"
+        }}
+      />
+
+      <Composition
+        id="ChessSolvedPuzzleShort"
+        component={SolvedPuzzleVideo}
+        fps={30}
+        width={2160}
+        height={3840}
+        calculateMetadata={({ props }) => {
+          const duration = calculateSolvedPuzzleDuration(props);
+          return {
+            durationInFrames: duration,
+          };
+        }}
+        defaultProps={{
+          puzzleTitle: "Solved Puzzles",
+          initialFen: "2n1r2k/ppp3pp/2n3q1/3Q2N1/3P1p2/2P4P/PP3PP1/R4NK1 w - - 0 1",
+          puzzleMoves: ["g5f7", "h8g8", "f7e5", "g8h8", "e5g6", "h7g6"],
+          sanList: ["1. Nf7+", "1... Kg8", "2. Ne5+", "2... Kh8", "3. Nxg6+", "3... hxg6"],
+          evaluation: "+-",
+          sideToPlay: "White to Play",
+          playerColor: "white",
+          colors: { dark: "#769656", light: "#eeeed2" },
+          bg: "morning_bg.png",
+          clubTitle: "CHOWKIDINGHEE CHESS CLUB",
+          authorName: "by RAJNISH VERMA"
+        }}
+      />
     </>
   );
 };
+
 

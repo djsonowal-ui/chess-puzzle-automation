@@ -31,4 +31,5 @@ yarn-error.log*
 scratch/
 
 # Video trivia outputs and logs
-output_player_*
+output_*.mp4
+output_*

@@ -2,10 +2,18 @@ name: Daily Chess Automation
 
 on:
   schedule:
-    # 6 AM IST (00:30 UTC) - Run once daily
-    - cron: '30 0 * * *'
-  workflow_dispatch: # Allow manual triggering
-
+    # Morning: 03:30 UTC (9:00 AM IST)
+    - cron: '30 3 * * *'
+    # Afternoon: 08:30 UTC (2:00 PM IST)
+    - cron: '30 8 * * *'
+    # Evening: 13:30 UTC (7:00 PM IST)
+    - cron: '30 13 * * *'
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: 'Slot to render and upload (auto, morning, afternoon, evening, all)'
+        required: false
+        default: 'auto'
 
 # Permissions needed to commit changes back to the repository
 permissions:
@@ -38,35 +46,38 @@ jobs:
       - name: Replenish Puzzles
         run: node replenish.mjs
 
-      - name: Render Morning Video
+      - name: Render and Upload Chess Short
         env:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
         run: |
-          TODAY=$(date -u +%Y-%m-%d)
-          echo "📅 Processing Morning Video for date: $TODAY"
-          node automate.mjs --slot=morning --schedule="${TODAY}T03:30:00Z"
+          INPUT_SLOT="${{ github.event.inputs.slot }}"
+          if [ -z "$INPUT_SLOT" ]; then
+            INPUT_SLOT="auto"
+          fi
 
-      - name: Render Afternoon Video
-        env:
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
-        run: |
-          TODAY=$(date -u +%Y-%m-%d)
-          echo "☀️ Processing Afternoon Video for date: $TODAY"
-          node automate.mjs --slot=afternoon --schedule="${TODAY}T08:30:00Z"
-
-      - name: Render Evening Video
-        env:
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
-        run: |
-          TODAY=$(date -u +%Y-%m-%d)
-          echo "🌆 Processing Evening Video for date: $TODAY"
-          node automate.mjs --slot=evening --schedule="${TODAY}T13:30:00Z"
+          if [ "$INPUT_SLOT" = "all" ]; then
+            echo "🚀 Running ALL slots (Morning, Afternoon, Evening)..."
+            node automate.mjs --slot=morning
+            node automate.mjs --slot=afternoon
+            node automate.mjs --slot=evening
+          elif [ "$INPUT_SLOT" != "auto" ]; then
+            echo "🎯 Running manually specified slot: $INPUT_SLOT"
+            node automate.mjs --slot=$INPUT_SLOT
+          else
+            HOUR=$(date -u +%H)
+            echo "📅 Auto-detecting slot based on current UTC hour ($HOUR)..."
+            if [ "$HOUR" -ge "02" ] && [ "$HOUR" -lt "06" ]; then
+              SLOT="morning"
+            elif [ "$HOUR" -ge "06" ] && [ "$HOUR" -lt "11" ]; then
+              SLOT="afternoon"
+            else
+              SLOT="evening"
+            fi
+            echo "✨ Selected Slot: $SLOT"
+            node automate.mjs --slot=$SLOT
+          fi
 
       - name: Commit and Push changes
         if: always()

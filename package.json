@@ -4,7 +4,11 @@
   "description": "Chess puzzle video generation with Remotion",
   "scripts": {
     "dev": "remotion studio",
-    "build": "remotion bundle"
+    "build": "remotion bundle",
+    "render:solved": "node render-solved-puzzle.mjs",
+    "automate:solved": "node automate-solved-puzzle.mjs",
+    "render:opening": "node render-opening.mjs",
+    "automate:opening": "node automate-opening.mjs"
   },
   "dependencies": {
     "@remotion/bundler": "^4.0.448",

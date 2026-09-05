@@ -369,10 +369,12 @@ async function main() {
     // Validate the puzzle first
     validatePuzzle(puzzleData);
 
-    // MARK AS USED IMMEDIATELY after validation passes. 
+    // MARK AS USED IMMEDIATELY after validation passes (unless in dry-run mode). 
     // This ensures that even if rendering or uploading fails, 
     // we NEVER attempt this specific puzzle again.
-    await markPuzzleAsUsed(puzzleData);
+    if (!isDryRun) {
+      await markPuzzleAsUsed(puzzleData);
+    }
 
     const metadata = generateSEOMetadata(theme, puzzleData);
     console.log(`✨ SEO Title: ${metadata.title}`);

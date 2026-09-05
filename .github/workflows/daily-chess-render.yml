@@ -57,6 +57,7 @@ jobs:
             INPUT_SLOT="auto"
           fi
 
+          CRON_SCHED="${{ github.event.schedule }}"
           if [ "$INPUT_SLOT" = "all" ]; then
             echo "🚀 Running ALL slots (Morning, Afternoon, Evening)..."
             node automate.mjs --slot=morning
@@ -65,9 +66,18 @@ jobs:
           elif [ "$INPUT_SLOT" != "auto" ]; then
             echo "🎯 Running manually specified slot: $INPUT_SLOT"
             node automate.mjs --slot=$INPUT_SLOT
+          elif [ "$CRON_SCHED" = "30 3 * * *" ]; then
+            echo "📅 Scheduled Trigger: Morning Slot (30 3 * * *)"
+            node automate.mjs --slot=morning
+          elif [ "$CRON_SCHED" = "30 8 * * *" ]; then
+            echo "📅 Scheduled Trigger: Afternoon Slot (30 8 * * *)"
+            node automate.mjs --slot=afternoon
+          elif [ "$CRON_SCHED" = "30 13 * * *" ]; then
+            echo "📅 Scheduled Trigger: Evening Slot (30 13 * * *)"
+            node automate.mjs --slot=evening
           else
             HOUR=$(date -u +%H)
-            echo "📅 Auto-detecting slot based on current UTC hour ($HOUR)..."
+            echo "📅 Fallback auto-detection based on UTC hour ($HOUR)..."
             if [ "$HOUR" -ge "02" ] && [ "$HOUR" -lt "06" ]; then
               SLOT="morning"
             elif [ "$HOUR" -ge "06" ] && [ "$HOUR" -lt "11" ]; then

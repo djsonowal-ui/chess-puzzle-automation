@@ -5545,8 +5545,9 @@
       "e6c7"
     ],
     "playerColor": "white",
-    "used": false,
-    "addedDate": "2026-08-05T03:44:37.801Z"
+    "used": true,
+    "addedDate": "2026-08-05T03:44:37.801Z",
+    "lastUsed": "2026-09-06T07:14:46.718Z"
   },
   {
     "id": "polgar_4257",

@@ -4793,8 +4793,9 @@
       "b4f8"
     ],
     "playerColor": "white",
-    "used": false,
-    "addedDate": "2026-07-20T04:22:46.051Z"
+    "used": true,
+    "addedDate": "2026-07-20T04:22:46.051Z",
+    "lastUsed": "2026-09-06T08:48:39.624Z"
   },
   {
     "id": "polgar_4054",

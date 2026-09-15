@@ -5265,8 +5265,9 @@
       "g4g1"
     ],
     "playerColor": "white",
-    "used": false,
-    "addedDate": "2026-07-30T03:42:14.952Z"
+    "used": true,
+    "addedDate": "2026-07-30T03:42:14.952Z",
+    "lastUsed": "2026-09-15T08:53:33.003Z"
   },
   {
     "id": "polgar_4090",
@@ -6258,5 +6259,21 @@
     "playerColor": "white",
     "used": false,
     "addedDate": "2026-09-14T18:49:34.768Z"
+  },
+  {
+    "id": "polgar_3845",
+    "session": "evening",
+    "mateCount": 3,
+    "initialFen": "4r3/5R2/p5pp/6k1/8/1B4KP/P1P1r3/8 w - - 0 1",
+    "puzzleMoves": [
+      "h3h4",
+      "g5h5",
+      "f7f5",
+      "g6f5",
+      "b3f7"
+    ],
+    "playerColor": "white",
+    "used": false,
+    "addedDate": "2026-09-15T08:53:31.943Z"
   }
 ]

@@ -1,9 +1,6 @@
 name: Daily Chess Video Render & Upload
 
 on:
-  schedule:
-    # 8:30 AM IST = 3:00 AM UTC (Daily)
-    - cron: '0 3 * * *'
   workflow_dispatch: # Allows manual trigger anytime from GitHub UI
 
 jobs:

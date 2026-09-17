@@ -2,18 +2,14 @@ name: Daily Chess Automation
 
 on:
   schedule:
-    # Morning: 03:30 UTC (9:00 AM IST)
-    - cron: '30 3 * * *'
-    # Afternoon: 08:30 UTC (2:00 PM IST)
-    - cron: '30 8 * * *'
-    # Evening: 13:30 UTC (7:00 PM IST)
-    - cron: '30 13 * * *'
+    # 4:00 AM IST (22:30 UTC previous day) - Overnight run to schedule all 4 daily videos
+    - cron: '30 22 * * *'
   workflow_dispatch:
     inputs:
       slot:
-        description: 'Slot to render and upload (auto, morning, afternoon, evening, all)'
+        description: 'Slot to render and upload (all, morning, player, afternoon, evening)'
         required: false
-        default: 'auto'
+        default: 'all'
 
 # Permissions needed to commit changes back to the repository
 permissions:
@@ -46,7 +42,7 @@ jobs:
       - name: Replenish Puzzles
         run: node replenish.mjs
 
-      - name: Render and Upload Chess Short
+      - name: Render and Schedule Daily Shorts
         env:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
@@ -54,45 +50,66 @@ jobs:
         run: |
           INPUT_SLOT="${{ github.event.inputs.slot }}"
           if [ -z "$INPUT_SLOT" ]; then
-            INPUT_SLOT="auto"
+            INPUT_SLOT="all"
           fi
 
-          CRON_SCHED="${{ github.event.schedule }}"
-          if [ "$INPUT_SLOT" = "all" ]; then
-            echo "🚀 Running ALL slots (Morning, Afternoon, Evening)..."
-            node automate.mjs --slot=morning
-            node automate.mjs --slot=afternoon
-            node automate.mjs --slot=evening
-          elif [ "$INPUT_SLOT" != "auto" ]; then
-            echo "🎯 Running manually specified slot: $INPUT_SLOT"
-            node automate.mjs --slot=$INPUT_SLOT
-          elif [ "$CRON_SCHED" = "30 3 * * *" ]; then
-            echo "📅 Scheduled Trigger: Morning Slot (30 3 * * *)"
-            node automate.mjs --slot=morning
-          elif [ "$CRON_SCHED" = "30 8 * * *" ]; then
-            echo "📅 Scheduled Trigger: Afternoon Slot (30 8 * * *)"
-            node automate.mjs --slot=afternoon
-          elif [ "$CRON_SCHED" = "30 13 * * *" ]; then
-            echo "📅 Scheduled Trigger: Evening Slot (30 13 * * *)"
-            node automate.mjs --slot=evening
-          else
-            HOUR=$(date -u +%H)
-            echo "📅 Fallback auto-detection based on UTC hour ($HOUR)..."
-            if [ "$HOUR" -ge "02" ] && [ "$HOUR" -lt "06" ]; then
-              SLOT="morning"
-            elif [ "$HOUR" -ge "06" ] && [ "$HOUR" -lt "11" ]; then
-              SLOT="afternoon"
-            else
-              SLOT="evening"
-            fi
-            echo "✨ Selected Slot: $SLOT"
-            node automate.mjs --slot=$SLOT
-          fi
+          # Compute today's date in Indian Standard Time (Asia/Kolkata)
+          TODAY=$(TZ="Asia/Kolkata" date +%Y-%m-%d)
+          echo "📅 Processing daily schedule for date (IST): $TODAY"
+          echo "🎯 Target Run Mode: $INPUT_SLOT"
+
+          run_morning() {
+            echo "☀️ [Slot 1/4] Scheduling Morning Puzzle for 7:30 AM IST (${TODAY}T02:00:00Z)..."
+            node automate.mjs --slot=morning --schedule="${TODAY}T02:00:00Z" || true
+          }
+
+          run_player() {
+            echo "👑 [Slot 2/4] Scheduling Guess the GM for 8:30 AM IST (${TODAY}T03:00:00Z)..."
+            node automate-player.mjs --schedule="${TODAY}T03:00:00Z" || true
+          }
+
+          run_afternoon() {
+            echo "☕ [Slot 3/4] Scheduling Afternoon Puzzle for 12:30 PM IST (${TODAY}T07:00:00Z)..."
+            node automate.mjs --slot=afternoon --schedule="${TODAY}T07:00:00Z" || true
+          }
+
+          run_evening() {
+            echo "🌆 [Slot 4/4] Scheduling Evening Puzzle for 5:00 PM IST (${TODAY}T11:30:00Z)..."
+            node automate.mjs --slot=evening --schedule="${TODAY}T11:30:00Z" || true
+          }
+
+          case "$INPUT_SLOT" in
+            "all")
+              run_morning
+              run_player
+              run_afternoon
+              run_evening
+              ;;
+            "morning")
+              run_morning
+              ;;
+            "player")
+              run_player
+              ;;
+            "afternoon")
+              run_afternoon
+              ;;
+            "evening")
+              run_evening
+              ;;
+            *)
+              echo "⚠️ Unknown slot '$INPUT_SLOT', running all..."
+              run_morning
+              run_player
+              run_afternoon
+              run_evening
+              ;;
+          esac
 
       - name: Commit and Push changes
         if: always()
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add puzzles.json
+          git add puzzles.json scratch/player_cache.json || git add puzzles.json
           git diff --quiet && git diff --staged --quiet || (git commit -m "chore: persist puzzle state and replenish stock" && git push)
